@@ -104,8 +104,8 @@ const user = {
           commit('SET_ROLES', data.roles || [])
           commit('SET_PERMISSIONS', data.permissions || [])
           resolve(data)
-        }).catch((err) => {
-          reject()
+        }).catch((error) => {
+          reject(error)
         })
       })
     },
