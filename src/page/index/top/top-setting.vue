@@ -15,7 +15,7 @@
       <div class="setting__header">设置
         <small>(滑动鼠标下面还有更多设置)</small>
       </div>
-      <el-scrollbar style="height:500px">
+      <el-scrollbar style="height:100%">
         <div class="setting__body setting__form">
           <el-form ref="form" :model="form" label-width="80px">
             <el-form-item v-for="(item, key) in option" :label="item.label" v-bind:key="key">

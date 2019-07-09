@@ -13,6 +13,7 @@ import { loadStyle } from '@/util/util'
 import * as urls from '@/config/env'
 import { iconfontUrl, iconfontVersion } from '@/config/env'
 import * as filters from '@/filters' // 全局filter
+import 'element-ui/lib/theme-chalk/index.css'
 import '@/styles/common.scss'
 // 引入avue的包
 import Avue from '@smallwei/avue'
