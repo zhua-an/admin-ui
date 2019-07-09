@@ -43,6 +43,7 @@
   import SockJS from 'sockjs-client';
   import Stomp from 'stompjs';
   import store from "@/store";
+  // import router from '@/router/router'
 
   export default {
     components: {
@@ -62,6 +63,23 @@
     created() {
       //实时检测刷新token
       this.refreshToken()
+    },
+    watch: {
+      // '$route' (newRoute) {
+      //   console.log(newRoute)
+      //   const meta = newRoute.meta || {}
+      //   const value = newRoute.query.src || newRoute.fullPath
+      //   const label = newRoute.query.name || newRoute.name
+      //   if (meta.isTab !== false && !validatenull(value) && !validatenull(label)) {
+      //     this.$store.commit('ADD_TAG', {
+      //       label: label,
+      //       value: value,
+      //       params: newRoute.params,
+      //       query: newRoute.query,
+      //       group: router.$avueRouter.group || []
+      //     })
+      //   }
+      // }
     },
     destroyed() {
       console.log("销毁")

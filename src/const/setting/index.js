@@ -35,14 +35,10 @@ export const list = [{
 }]
 export const option = (safe) => {
   const _safe = safe
-  return {
-    submitBtn: false,
-    emptyBtn:false,
-    column: [{
+  return [{
       label: '标签',
       prop: 'showTag',
       type: 'switch',
-      span: 24,
       dicData: dicData,
       click: ({ column }) => {
         _safe.set(column.prop)
@@ -51,7 +47,6 @@ export const option = (safe) => {
       label: '日志',
       prop: 'showDebug',
       type: 'switch',
-      span: 24,
       dicData: dicData,
       click: ({ column }) => {
         _safe.set(column.prop)
@@ -60,7 +55,6 @@ export const option = (safe) => {
       label: '主题',
       prop: 'showTheme',
       type: 'switch',
-      span: 24,
       dicData: dicData,
       click: ({ column }) => {
         _safe.set(column.prop)
@@ -69,7 +63,6 @@ export const option = (safe) => {
       label: '主题色',
       prop: 'showColor',
       type: 'switch',
-      span: 24,
       dicData: dicData,
       click: ({ column }) => {
         _safe.set(column.prop)
@@ -78,7 +71,6 @@ export const option = (safe) => {
       label: '全屏',
       prop: 'showFullScren',
       type: 'switch',
-      span: 24,
       dicData: dicData,
       click: ({ column }) => {
         _safe.set(column.prop)
@@ -87,7 +79,6 @@ export const option = (safe) => {
       label: '锁屏',
       prop: 'showLock',
       type: 'switch',
-      span: 24,
       dicData: dicData,
       click: ({ column }) => {
         _safe.set(column.prop)
@@ -96,7 +87,6 @@ export const option = (safe) => {
       label: '搜索',
       prop: 'showSearch',
       type: 'switch',
-      span: 24,
       dicData: dicData,
       click: ({ column }) => {
         _safe.set(column.prop)
@@ -105,7 +95,6 @@ export const option = (safe) => {
       label: '缩放',
       prop: 'showCollapse',
       type: 'switch',
-      span: 24,
       dicData: dicData,
       click: ({ column }) => {
         _safe.set(column.prop)
@@ -114,11 +103,9 @@ export const option = (safe) => {
       label: '顶部菜单',
       prop: 'showMenu',
       type: 'switch',
-      span: 24,
       dicData: dicData,
       click: ({ column }) => {
         _safe.set(column.prop)
       }
     }]
-  }
 }

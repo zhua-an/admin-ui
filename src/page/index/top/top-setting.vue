@@ -9,16 +9,20 @@
          :class="{'setting__content--show':box}">
       <div class="setting__header">版权信息</div>
       <div class="setting__body setting__about">
-        <p>Version：PigX 2.2.0</p>
-        <p>Copyright: Pig4Cloud ©2018-2025</p>
+        <p>Version: 1.0.0</p>
+        <p>Copyright: ©2019</p>
       </div>
       <div class="setting__header">设置
         <small>(滑动鼠标下面还有更多设置)</small>
       </div>
       <el-scrollbar style="height:500px">
         <div class="setting__body setting__form">
-          <avue-form v-model="form"
-                     :option="option"></avue-form>
+          <el-form ref="form" :model="form" label-width="80px">
+            <el-form-item v-for="(item, key) in option" :label="item.label" v-bind:key="key">
+              <el-switch v-model="form[item.prop]" :active-text="item.dicData[0].label" :inactive-text="item.dicData[1].label"
+                :active-value="item.dicData[0].value" :inactive-value="item.dicData[1].value" @change="item.click({'column':item})"></el-switch>
+            </el-form-item>
+          </el-form> 
         </div>
       </el-scrollbar>
     </div>
@@ -31,9 +35,15 @@ import { validatenull } from '@/util/validate'
 import { option, list } from '@/const/setting/'
 export default {
   data () {
+    let form = {}
+    if(list != null && list.length > 0) {
+      list.forEach(ele => {
+        form[ele.key] = 'true'
+      })
+    }
     return {
       box: false,
-      form: {},
+      form,
       list: list,
       option: option(this)
     }
@@ -57,25 +67,25 @@ export default {
   },
   methods: {
     close () {
-      this.box = false;
-      this.$store.commit('SET_SHADE', false);
+      this.box = false
+      this.$store.commit('SET_SHADE', false)
     },
     set (key) {
-      const ele = this.find(key);
-      this.$store.commit(ele.commit, eval(this.form[ele.key]));
+      const ele = this.find(key)
+      this.$store.commit(ele.commit, eval(this.form[ele.key]))
     },
     find (key) {
       return this.list.filter(ele => ele.key === key)[0]
     },
     init () {
       this.list.forEach(ele => {
-        this.form[ele.key] = validatenull(this[ele.key]) ? 'true' : this[ele.key] + '';
-        this.set(ele.key);
+        this.form[ele.key] = validatenull(this[ele.key]) ? 'true' : this[ele.key] + ''
+        this.set(ele.key)
       })
     },
     open () {
-      this.box = true;
-      this.$store.commit('SET_SHADE', true);
+      this.box = true
+      this.$store.commit('SET_SHADE', true)
     }
   }
 }
