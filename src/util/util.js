@@ -1,3 +1,4 @@
+import CryptoJS from 'crypto-js'
 import {validatenull} from './validate'
 import request from '@/router/axios'
 

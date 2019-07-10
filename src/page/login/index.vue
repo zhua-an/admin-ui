@@ -16,15 +16,6 @@
       <div class="login-border">
         <div class="login-main">
           <h4 class="login-title">
-            <el-select
-              class="login-select animated fadeIn"
-              v-model="active"
-              @change="handleCommand"
-              placeholder="点击请选择租户"
-              size="mini">
-              <el-option label="租户1 用户登录" value="1"></el-option>
-              <el-option label="租户2 用户登录" value="2"></el-option>
-            </el-select>
           </h4>
           <userLogin v-if="activeName==='user'"></userLogin>
           <codeLogin v-else-if="activeName==='code'"></codeLogin>
@@ -64,7 +55,6 @@
     data() {
       return {
         time: "",
-        active: "",
         activeName: "user"
       };
     },
@@ -88,7 +78,6 @@
       }
     },
     created() {
-      this.active = getStore({ name: "tenantId" });
       this.getTime();
       setInterval(() => {
         this.getTime();
@@ -100,9 +89,6 @@
     },
     props: [],
     methods: {
-      handleCommand(command) {
-        setStore({ name: "tenantId", content: command });
-      },
       getTime() {
         this.time = dateFormat(new Date());
       }

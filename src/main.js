@@ -5,13 +5,12 @@ import App from '@/App'
 import ElementUI from 'element-ui'
 import axios from '@/router/axios'
 import VueAxios from 'vue-axios'
-// import '@/permission' // 权限
-import '@/error' // 日志
 import router from '@/router/router'
 import store from '@/store'
 import { loadStyle } from '@/util/util'
 import * as urls from '@/config/env'
 import { iconfontUrl, iconfontVersion } from '@/config/env'
+import installPlugin from '@/plugin'
 import * as filters from '@/filters' // 全局filter
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/styles/common.scss'
@@ -28,25 +27,40 @@ Vue.prototype.validatenull = validatenull
 Vue.use(ElementUI)
 Vue.use(Avue)
 Vue.use(VueAxios, axios)
+/**
+ * @description 注册admin内置插件
+ */
+installPlugin(Vue)
 
-// 注册全局容器
+/**
+ * @description 注册全局容器
+ */
 Vue.component('basicContainer', basicContainer)
 
-// 加载相关url地址
+/**
+ * @description 加载相关url地址
+ */
 Object.keys(urls).forEach(key => {
   Vue.prototype[key] = urls[key]
 })
 
-//加载过滤器
+/**
+ * @description 加载过滤器
+ */
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
 
-// 动态加载阿里云字体库
+/**
+ * @description 动态加载阿里云字体库
+ */
 iconfontVersion.forEach(ele => {
   loadStyle(iconfontUrl.replace('$key', ele))
 })
 
+/**
+ * @description 生产环境关掉提示
+ */
 Vue.config.productionTip = false
 
 new Vue({

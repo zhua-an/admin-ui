@@ -75,17 +75,5 @@ export default [{
     {
       path: '*',
       redirect: '/404',
-    },
-    {
-        path: '/myiframe',
-        component: Layout,
-        redirect: '/myiframe',
-        children: [{
-            path: ":routerPath",
-            name: 'iframe',
-            component: () =>
-                import ( /* webpackChunkName: "page" */ '@/components/iframe/main'),
-            props: true
-        }]
     }
 ]

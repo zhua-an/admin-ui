@@ -2,7 +2,7 @@ import {getStore, setStore} from '@/util/store'
 import {isURL} from '@/util/validate'
 import {getUserInfo, loginByMobile, loginBySocial, loginByUsername, logout, refreshToken} from '@/api/login'
 import {deepClone, encryption} from '@/util/util'
-import webiste from '@/const/website'
+import webiste from '@/config/website'
 import {GetMenu} from '@/api/admin/menu'
 
 function addPath(ele, first) {
@@ -158,9 +158,7 @@ const user = {
       })
     },
     // 获取系统菜单
-    GetMenu({
-              commit
-            }) {
+    GetMenu({commit}) {
       return new Promise(resolve => {
         GetMenu().then((res) => {
           const data = res.data.data

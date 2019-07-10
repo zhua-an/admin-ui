@@ -101,8 +101,8 @@ export default {
             }
           })
         }
-      } catch(e) {
-
+      } catch(err) {
+        console.log("Cought Error: ", err)
       }
       return text
     }

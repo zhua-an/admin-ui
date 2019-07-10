@@ -1,5 +1,6 @@
 const path = require('path')
-const url = 'http://127.0.0.1:9999'
+const auth_url = 'http://localhost:3000'
+const admin_url = 'http://localhost:8888'
 const port = 8088
 const resolve = dir => {
   return path.join(__dirname, dir)
@@ -16,14 +17,6 @@ module.exports = {
   // 设为false打包时不生成.map文件
   productionSourceMap: false,
   chainWebpack: config => {
-    // // 忽略的打包文件
-    // config.externals({
-    //   'vue': 'Vue',
-    //   'vue-router': 'VueRouter',
-    //   'vuex': 'Vuex',
-    //   'axios': 'axios',
-    //   'element-ui': 'ELEMENT'
-    // })
     // key,value自行定义，比如.set('@@', resolve('src/components'))
     config.resolve.alias
       .set('@', resolve('src'))
@@ -40,18 +33,25 @@ module.exports = {
   devServer: {
     port: port,
     proxy: {
-      '/auth': {
-        target: url,
+      '/code': {
+        target: auth_url,
         ws: true,
         pathRewrite: {
-          '^/auth': '/auth'
+          '^/code': '/code'
+        }
+      },
+      '/auth': {
+        target: auth_url,
+        ws: true,
+        pathRewrite: {
+          '^/auth': ''
         }
       },
       '/admin': {
-        target: url,
+        target: admin_url,
         ws: true,
         pathRewrite: {
-          '^/admin': '/admin'
+          '^/admin': ''
         }
       }
     }

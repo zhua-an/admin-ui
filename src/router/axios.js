@@ -1,6 +1,5 @@
 import axios from 'axios'
 import {serialize} from '@/util/util'
-import {getStore} from '../util/store'
 import NProgress from 'nprogress' // progress bar
 import errorCode from '@/const/errorCode'
 import router from "@/router/router"
@@ -22,14 +21,10 @@ NProgress.configure({
 // HTTPrequest拦截
 axios.interceptors.request.use(config => {
   NProgress.start() // start progress bar
-  const TENANT_ID = getStore({name: 'tenantId'})
   const isToken = (config.headers || {}).isToken === false
   let token =  store.getters.access_token
   if (token && !isToken) {
     config.headers['Authorization'] = 'Bearer ' + token// token
-  }
-  if (TENANT_ID) {
-    config.headers['TENANT_ID'] = TENANT_ID // 租户ID
   }
   // headers中配置serialize为true开启序列化
   if (config.methods === 'post' && config.headers.serialize) {
@@ -40,7 +35,6 @@ axios.interceptors.request.use(config => {
 }, error => {
   return Promise.reject(error)
 })
-
 
 // HTTPresponse拦截
 axios.interceptors.response.use(res => {

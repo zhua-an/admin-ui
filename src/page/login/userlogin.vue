@@ -68,6 +68,7 @@
 
 <script>
 import { randomLenNum } from "@/util/util";
+import { validatenull } from '@/util/validate'
 import { mapGetters } from "vuex";
 export default {
   name: "userlogin",
@@ -79,7 +80,7 @@ export default {
           state: ''
       },
       loginForm: {
-        username: "admin",
+        username: "super_admin",
         password: "123456",
         code: "",
         redomStr: ""

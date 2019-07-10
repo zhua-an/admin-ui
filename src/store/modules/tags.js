@@ -1,6 +1,6 @@
 import { getStore, setStore } from '@/util/store'
 import { diff } from '@/util/util'
-import website from '@/const/website'
+import website from '@/config/website'
 
 const isFirstPage = website.isFirstPage
 const tagWel = website.fistPage

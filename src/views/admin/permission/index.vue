@@ -1,37 +1,20 @@
-<!--
-  -    Copyright (c) 2018-2025, lengleng All rights reserved.
-  -
-  - Redistribution and use in source and binary forms, with or without
-  - modification, are permitted provided that the following conditions are met:
-  -
-  - Redistributions of source code must retain the above copyright notice,
-  - this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-  - notice, this list of conditions and the following disclaimer in the
-  - documentation and/or other materials provided with the distribution.
-  - Neither the name of the pig4cloud.com developer nor the names of its
-  - contributors may be used to endorse or promote products derived from
-  - this software without specific prior written permission.
-  - Author: lengleng (wangiegie@gmail.com)
-  -->
-
 <template>
   <div class="app-container calendar-list-container">
     <basic-container>
       <div class="filter-container">
         <el-button-group>
           <el-button type="primary"
-                     v-if="menuManager_btn_add"
+                     v-if="sys_permission_add"
                      icon="plus"
                      @click="handlerAdd">添加
           </el-button>
           <el-button type="primary"
-                     v-if="menuManager_btn_edit"
+                     v-if="sys_permission_edit"
                      icon="edit"
                      @click="handlerEdit">编辑
           </el-button>
           <el-button type="primary"
-                     v-if="menuManager_btn_del"
+                     v-if="sys_permission_del"
                      icon="delete"
                      @click="handleDelete">删除
           </el-button>
@@ -196,9 +179,9 @@
           path: undefined
         },
         currentId: -1,
-        menuManager_btn_add: false,
-        menuManager_btn_edit: false,
-        menuManager_btn_del: false
+        sys_permission_add: false,
+        sys_permission_edit: false,
+        sys_permission_del: false
       }
     },
     filters: {
@@ -212,9 +195,9 @@
     },
     created() {
       this.getList()
-      this.menuManager_btn_add = this.permissions['sys_menu_add']
-      this.menuManager_btn_edit = this.permissions['sys_menu_edit']
-      this.menuManager_btn_del = this.permissions['sys_menu_del']
+      this.sys_permission_add = this.permissions['sys_permission_add']
+      this.sys_permission_edit = this.permissions['sys_permission_edit']
+      this.sys_permission_del = this.permissions['sys_permission_del']
     },
     computed: {
       ...mapGetters([

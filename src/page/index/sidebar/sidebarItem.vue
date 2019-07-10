@@ -19,7 +19,7 @@
                 :class="{'el-menu--display':collapse && first}">{{item[labelKey]}}</span>
         </template>
         <template v-for="(child,cindex) in item[childrenKey]">
-          <el-menu-item :index="child[pathKey],cindex"
+          <el-menu-item :index="`${child[pathKey]},${cindex}`"
                         @click="open(child)"
                         :class="{'is-active':vaildAvtive(child)}"
                         v-if="validatenull(child[childrenKey])"

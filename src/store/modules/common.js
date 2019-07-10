@@ -1,5 +1,5 @@
 import { getStore, removeStore, setStore } from '@/util/store'
-import website from '@/const/website'
+import website from '@/config/website'
 
 const common = {
 

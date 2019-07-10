@@ -98,15 +98,15 @@ RouterPlugin.install = function (router, store) {
           component (resolve) {
             // 判断是否为首路由
             if (first) {
-              require(['../page/index'], resolve)
+              require(['@/page/index'], resolve)
 
               // 判断是否为多层路由
             } else if (isChild && !first) {
-              require(['../page/index/layout'], resolve)
+              require(['@/page/index/layout'], resolve)
 
               // 判断是否为最终的页面视图
             } else {
-              require([`../${component}.vue`], resolve)
+              require([`@/${component}.vue`], resolve)
             }
           },
           name: name,
@@ -121,7 +121,7 @@ RouterPlugin.install = function (router, store) {
             if (first) {
               oMenu[propsDefault.path] = `${path}/index`
               return [{
-                component (resolve) { require([`../${component}.vue`], resolve) },
+                component (resolve) { require([`@/${component}.vue`], resolve) },
                 icon: icon,
                 name: name,
                 meta: meta,
