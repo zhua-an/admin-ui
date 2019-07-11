@@ -16,6 +16,7 @@
       <div class="login-border">
         <div class="login-main">
           <h4 class="login-title">
+            登录 Admin
           </h4>
           <userLogin v-if="activeName==='user'"></userLogin>
           <codeLogin v-else-if="activeName==='code'"></codeLogin>
