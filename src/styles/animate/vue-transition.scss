@@ -30,6 +30,26 @@
     transform: scale(0.8);
 }
 
+/* breadcrumb transition */
+.fade-breadcrumb-enter-active,
+.fade-breadcrumb-leave-active {
+  transition: all .5s;
+}
+
+.fade-breadcrumb-enter,
+.fade-breadcrumb-leave-active {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.fade-breadcrumb-move {
+  transition: all .5s;
+}
+
+.fade-breadcrumb-leave-active {
+  position: absolute;
+}
+
 @-webkit-keyframes animate-cloud {
   from {
     background-position: 600px 100%;
