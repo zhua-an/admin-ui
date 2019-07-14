@@ -9,7 +9,7 @@ export function GetMenu () {
 
 export function fetchMenuTree (query) {
   return request({
-    url: '/admin/sysPermission/tree',
+    url: '/admin/sysPermission/getTree',
     method: 'get',
     params: query
   })
