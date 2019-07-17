@@ -107,7 +107,7 @@
   import {addObj, delObj, fetchList, fetchRoleTree, getObj, permissionUpd, putObj} from '@/api/admin/role'
   import {tableOption} from '@/const/crud/admin/role'
   import {fetchTree} from '@/api/admin/dept'
-  import {fetchMenuTree} from '@/api/admin/menu'
+  import {fetchMenuTree} from '@/api/admin/permit'
   import {mapGetters} from 'vuex'
 
   export default {

@@ -33,7 +33,8 @@
                    :props="defaultProps"
                    @node-click="getNodeData"
                    @node-expand="nodeExpand"
-                   @node-collapse="nodeCollapse">
+                   @node-collapse="nodeCollapse"
+                   ref="tree">
           </el-tree>
         </el-col>
         <el-col :span="16"
@@ -42,6 +43,7 @@
             <el-form :label-position="labelPosition"
                      label-width="80px"
                      :model="form"
+                     :rules="rules"
                      ref="form">
               <el-form-item label="父级节点"
                             prop="parentId">
@@ -49,31 +51,30 @@
                           :disabled="true"
                           placeholder="请输入父级节点"></el-input>
               </el-form-item>
-              <el-form-item label="节点ID"
-                            prop="menuId">
-                <el-input v-model="form.menuId"
-                          :disabled="formEdit || form.menuId"
+              <el-form-item v-if="formStatus != 'create'"
+                            label="节点ID"
+                            prop="id">
+                <el-input v-model="form.id"
+                          :disabled="true"
                           placeholder="请输入节点ID"></el-input>
               </el-form-item>
-              <el-form-item label="标题"
+              <el-form-item :key="'name'"
+                            label="标题"
                             prop="name">
                 <el-input v-model="form.name"
                           :disabled="formEdit"
                           placeholder="请输入标题"></el-input>
               </el-form-item>
-              <el-form-item label="权限标识"
-                            prop="permission">
-                <el-input v-model="form.permission"
+              <el-form-item :key="'sort'"
+                            label="排序"
+                            prop="sort">
+                <el-input type="number"
+                          v-model="form.sort"
                           :disabled="formEdit"
-                          placeholder="请输入权限标识"></el-input>
+                          placeholder="请输入排序"></el-input>
               </el-form-item>
-              <el-form-item label="图标"
-                            prop="icon">
-                <el-input v-model="form.icon"
-                          :disabled="formEdit"
-                          placeholder="请输入图标"></el-input>
-              </el-form-item>
-              <el-form-item label="类型"
+              <el-form-item :key="'type'"
+                            label="类型"
                             prop="type">
                 <el-select class="filter-item"
                            v-model="form.type"
@@ -85,27 +86,42 @@
                              :value="item"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="排序"
-                            prop="sort">
-                <el-input type="number"
-                          v-model="form.sort"
+              <el-form-item v-if="form.type === '1'"
+                            :key="'permission'"
+                            label="权限标识"
+                            prop="permission">
+                <el-input v-model="form.permission"
                           :disabled="formEdit"
-                          placeholder="请输入排序"></el-input>
+                          placeholder="请输入权限标识"></el-input>
               </el-form-item>
-              <el-form-item label="前端组件"
+              <el-form-item v-if="form.type === '0'"
+                            :key="'icon'"
+                            label="图标"
+                            prop="icon">
+                <el-input v-model="form.icon"
+                          :disabled="formEdit"
+                          placeholder="请输入图标"></el-input>
+              </el-form-item>
+              <el-form-item v-if="form.type === '0'"
+                            :key="'component'"
+                            label="前端组件"
                             prop="component">
                 <el-input v-model="form.component"
                           :disabled="formEdit"
                           placeholder="请输入描述"></el-input>
               </el-form-item>
-              <el-form-item label="前端地址"
-                            prop="component">
+              <el-form-item v-if="form.type === '0'"
+                            :key="'path'"
+                            label="前端地址"
+                            prop="path">
                 <el-input v-model="form.path"
                           :disabled="formEdit"
                           placeholder="iframe嵌套地址"></el-input>
               </el-form-item>
-              <el-form-item label="路由缓冲"
-                            prop="component">
+              <el-form-item v-if="form.type === '0'"
+                            :key="'keepAlive'"
+                            label="路由缓冲"
+                            prop="keepAlive">
                 <el-switch v-model="form.keepAlive"
                            :disabled="formEdit"
                            active-color="#13ce66"
@@ -135,11 +151,11 @@
 </template>
 
 <script>
-  import {addObj, delObj, fetchMenuTree, getObj, putObj} from '@/api/admin/menu'
+  import {addObj, delObj, fetchMenuTree, getObj, putObj} from '@/api/admin/permit'
   import {mapGetters} from 'vuex'
 
   export default {
-    name: 'menu',
+    name: 'permit',
     data() {
       return {
         list: null,
@@ -170,18 +186,39 @@
         form: {
           permission: undefined,
           name: undefined,
-          menuId: undefined,
+          id: undefined,
           parentId: undefined,
           icon: undefined,
           sort: undefined,
           component: undefined,
           type: undefined,
-          path: undefined
+          path: undefined,
+          keepAlive: undefined
         },
         currentId: -1,
         sys_permission_add: false,
         sys_permission_edit: false,
-        sys_permission_del: false
+        sys_permission_del: false,
+        rules: {
+          name: [
+            { required: true, message: "The name cannot be empty", trigger: "blur" }
+          ],
+          type: [
+            { required: true, message: "Please select type", trigger: "change" }
+          ],
+          sort: [
+            { required: true, message: 'The sort cannot be empty', trigger: 'blur' }
+          ],
+          permission: [
+            { required: true, message: "The permission cannot be empty", trigger: "blur" }
+          ],
+          component: [
+            { required: true, message: "The component cannot be empty", trigger: "blur" }
+          ],
+          path: [
+            { required: true, message: "The path cannot be empty", trigger: "blur" }
+          ]
+        }
       }
     },
     filters: {
@@ -215,7 +252,6 @@
         if (!value) return true
         return data.label.indexOf(value) !== -1
       },
-
       nodeExpand(data) {
         let aChildren = data.children
         if (aChildren.length > 0) {
@@ -250,19 +286,26 @@
           }
         }
       },
-
       getNodeData(data) {
         if (!this.formEdit) {
           this.formStatus = 'update'
         }
-        getObj(data.id).then(response => {
-          this.form = response.data.data
-        })
+        this.form.parentId = data.parentId
+        this.form.id = data.id
+        this.form.name = data.name
+        this.form.sort = data.sort
+        this.form.permission = data.permission
+        this.form.icon = data.icon
+        this.form.component = data.component
+        this.form.type = data.type
+        this.form.path = data.path
+        this.form.keepAlive = data.keepAlive
+
         this.currentId = data.id
         this.showElement = true
       },
       handlerEdit() {
-        if (this.form.menuId) {
+        if (this.form.id) {
           this.formEdit = false
           this.formStatus = 'update'
         }
@@ -292,42 +335,56 @@
         })
       },
       update() {
-        putObj(this.form).then(() => {
-          this.getList()
-          this.$notify({
-            title: '成功',
-            message: '更新成功',
-            type: 'success',
-            duration: 2000
-          })
+        this.$refs['form'].validate(valid => {
+          if (valid) {
+            putObj(this.form).then(() => {
+              this.getList()
+              this.$notify({
+                title: '成功',
+                message: '更新成功',
+                type: 'success',
+                duration: 2000
+              })
+            })
+          }
         })
       },
       create() {
-        addObj(this.form).then(() => {
-          this.getList()
-          this.$notify({
-            title: '成功',
-            message: '创建成功',
-            type: 'success',
-            duration: 2000
-          })
+        this.$refs['form'].validate(valid => {
+          if (valid) {
+            addObj(this.form).then(() => {
+              this.getList()
+              this.$notify({
+                title: '成功',
+                message: '创建成功',
+                type: 'success',
+                duration: 2000
+              })
+            })
+          }
         })
       },
       onCancel() {
         this.formEdit = true
         this.formStatus = ''
+        if(this.currentId != -1) {
+          this.$refs.tree.setCurrentKey(null)
+          this.currentId = -1
+        }
+        this.resetForm()
       },
       resetForm() {
         this.form = {
           permission: undefined,
           name: undefined,
-          menuId: undefined,
+          id: undefined,
           parentId: this.currentId,
           icon: undefined,
           sort: undefined,
           component: undefined,
           type: undefined,
-          path: undefined
+          path: undefined,
+          keepAlive: undefined
         }
       }
     }

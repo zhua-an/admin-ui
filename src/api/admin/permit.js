@@ -23,13 +23,6 @@ export function addObj (obj) {
   })
 }
 
-export function getObj (id) {
-  return request({
-    url: '/admin/sysPermission/' + id,
-    method: 'get'
-  })
-}
-
 export function delObj (id) {
   return request({
     url: '/admin/sysPermission/' + id,
