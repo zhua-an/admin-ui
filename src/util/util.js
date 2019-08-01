@@ -1,6 +1,7 @@
 import CryptoJS from 'crypto-js'
 import {validatenull} from './validate'
 import request from '@/router/axios'
+import store from "@/store"
 
 // 表单序列化
 export const serialize = data => {
@@ -326,3 +327,37 @@ export function handleImg(fileName, id) {
   })
 }
 
+
+/**
+ * @param {Array | String} value
+ * @returns {Boolean}
+ */
+export function checkPermission(value) {
+  if (value && value instanceof Array && value.length > 0) {
+    const permissions = store.getters && store.getters.permissions
+    const permissionRoles = value
+
+    // const hasPermission = permissions.some(role => {
+    //   return permissionRoles.includes(role)
+    // })
+
+    const hasPermission = permissionRoles.some(role => {
+      return permissions[role]
+    })
+
+    if (!hasPermission) {
+      return false
+    }
+    return true
+  } else if (value && getObjType(value) == 'string') {
+    const permissions = store.getters && store.getters.permissions
+    const hasPermission = permissions[value]
+    if (!hasPermission) {
+      return false
+    }
+    return true
+  } else {
+    console.error(`need roles! Like v-if="checkPermission(['admin','editor'])", not ` + value)
+    return false
+  }
+}

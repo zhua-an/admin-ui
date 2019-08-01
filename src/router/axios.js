@@ -3,7 +3,7 @@ import {serialize} from '@/util/util'
 import NProgress from 'nprogress' // progress bar
 import errorCode from '@/const/errorCode'
 import router from "@/router/router"
-import {Message} from 'element-ui'
+import {Message, MessageBox} from 'element-ui'
 import 'nprogress/nprogress.css'
 import store from "@/store"; // progress bar style
 axios.defaults.timeout = 30000
@@ -42,8 +42,20 @@ axios.interceptors.response.use(res => {
   const status = Number(res.status) || 200
   const message = res.data.msg || errorCode[status] || errorCode['default']
   if (status === 401) {
-    store.dispatch('FedLogOut').then(() => {
-      router.push({path: '/login'})
+    MessageBox.confirm(
+      '登陆已失效,请重新登录',
+      '确定登出',
+      {
+        confirmButtonText: '重新登录',
+        type: 'warning',
+        showClose: false,
+        showCancelButton: false,
+        closeOnPressEscape: false
+      }
+    ).then(() => {
+      store.dispatch('FedLogOut').then(() => {
+        router.push({path: '/login'})
+      })
     })
     return
   }
