@@ -103,20 +103,20 @@
                           placeholder="请输入图标"></el-input>
               </el-form-item>
               <el-form-item v-if="form.type === '0'"
+                            :key="'path'"
+                            label="前端路由"
+                            prop="path">
+                <el-input v-model="form.path"
+                          :disabled="formEdit"
+                          placeholder="请输入前端路由"></el-input>
+              </el-form-item>
+              <el-form-item v-if="form.type === '0'"
                             :key="'component'"
                             label="前端组件"
                             prop="component">
                 <el-input v-model="form.component"
                           :disabled="formEdit"
-                          placeholder="请输入描述"></el-input>
-              </el-form-item>
-              <el-form-item v-if="form.type === '0'"
-                            :key="'path'"
-                            label="前端地址"
-                            prop="path">
-                <el-input v-model="form.path"
-                          :disabled="formEdit"
-                          placeholder="iframe嵌套地址"></el-input>
+                          placeholder="请输入前端组件"></el-input>
               </el-form-item>
               <el-form-item v-if="form.type === '0'"
                             :key="'keepAlive'"
