@@ -12,6 +12,7 @@ import * as urls from '@/config/env'
 import { iconfontUrl, iconfontVersion } from '@/config/env'
 import installPlugin from '@/plugin'
 import * as filters from '@/filters' // 全局filter
+import Table from '@/components/table'
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/styles/common.scss'
 // 引入avue的包
@@ -27,6 +28,7 @@ Vue.prototype.validatenull = validatenull
 Vue.use(ElementUI)
 Vue.use(Avue)
 Vue.use(VueAxios, axios)
+Vue.use(Table)
 /**
  * @description 注册admin内置插件
  */

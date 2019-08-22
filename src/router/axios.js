@@ -1,4 +1,5 @@
 import axios from 'axios'
+import qs from 'qs'
 import {serialize} from '@/util/util'
 import NProgress from 'nprogress' // progress bar
 import errorCode from '@/const/errorCode'
@@ -30,6 +31,15 @@ axios.interceptors.request.use(config => {
   if (config.methods === 'post' && config.headers.serialize) {
     config.data = serialize(config.data)
     delete config.data.serialize
+  }
+  // 对get请求做参数处理
+  if (config.method === 'get' && config.params) {
+    if (config.url.indexOf('?') === -1) {
+      config.url = config.url + '?' + qs.stringify(config.params)
+    } else {
+      config.url = config.url + '&' + qs.stringify(config.params)
+    }
+    config.params = null
   }
   return config
 }, error => {

@@ -7,7 +7,7 @@ export function roleList () {
   })
 }
 
-export function fetchList (query) {
+export function queryList (query) {
   return request({
     url: '/admin/role/page',
     method: 'get',
@@ -31,41 +31,41 @@ export function getObj (id) {
 
 export function addObj (obj) {
   return request({
-    url: '/admin/role',
+    url: '/admin/role/add',
     method: 'post',
     data: obj
   })
 }
 
-export function putObj (obj) {
+export function updateObj (obj) {
   return request({
-    url: '/admin/role',
-    method: 'put',
+    url: '/admin/role/update',
+    method: 'post',
     data: obj
   })
 }
 
 export function delObj (id) {
   return request({
-    url: '/admin/role/' + id,
+    url: '/admin/role/delete/' + id,
     method: 'delete'
   })
 }
 
-export function permissionUpd (roleId, menuIds) {
+export function updateRolePermit (roleId, permissionIds) {
   return request({
-    url: '/admin/role/menu',
-    method: 'put',
+    url: '/admin/role/updateRolePermit',
+    method: 'post',
     params: {
       roleId: roleId,
-      menuIds: menuIds
+      permissionIds: permissionIds
     }
   })
 }
 
-export function fetchRoleTree (roleName) {
+export function fetchRoleTree (roleId) {
   return request({
-    url: '/admin/menu/tree/' + roleName,
+    url: '/admin/permission/fetchRoleTree/' + roleId,
     method: 'get'
   })
 }
