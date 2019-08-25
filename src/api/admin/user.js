@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-export function queryList (query) {
+export function queryPage (query) {
   return request({
     url: '/admin/sysuser/page',
     method: 'get',

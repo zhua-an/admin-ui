@@ -102,19 +102,78 @@ data() {
 
 10、合并单元格：hasMergeRowOrColumn；默认为false，false时为无，true时为有，当为true时，还需要监听自定义事件'onMergeRowOrColumn'，此方法接受一个参数，包含四个属性row，column，rowIndex，columnIndex
 
+11、 column 实例
+{
+  label: '角色名',
+  prop: 'roleName',
+  width: '100',
+  align: 'center',
+  render: (h, params) => {
+    return h('el-tag', {
+      props: {
+        type: params.row.delFlag === 0 ? 'success' : params.row.delFlag === 1 ? 'info' : 'danger'
+      }, // 组件的props
+      on: {
+        click: () => {
+          this.a.methods.show(params)
+        }
+      },
+    }, params.row.delFlag === '0' ? '上架' : params.row.delFlag === '1' ? '下架' : '审核中')
+  }
+},{
+  label: '角色名',
+  prop: 'roleName',
+  width: 200,
+  align: 'center',
+  formatter: (row, column, index) => {
+    return `<span style="white-space: nowrap;color: dodgerblue;">${row.label}</span>`
+  }
+},{
+  label: '角色名',
+  prop: 'roleName',
+  width: 100,
+  align: 'center',
+  formatter: (row, column, index) => {
+    return `<a href="www.baidu.com">${row.roleName}</a>`
+  }
+},{
+  label: '角色名',
+  prop: 'roleName',
+  width: 300,
+  align: 'center',
+  newjump: (row, columns, index) => {
+    return `www.baidu.com?name=${row.name}&address=${row.address}`
+  }
+}
 -->
+
 <template>
   <div class="v1-table">
     <template>
+      <!-- table中间button eg:导出 -->
+      <div v-if="operBut && operBut.length > 0" class="btn-operates">
+        <span v-for="(item, index) in operBut" :key="index">
+          <a v-if="checkPermission(item.hasPermit) "
+            :href="item.href || null"
+            @click="item.method()"
+          >
+            <el-button type="primary">{{item.title}}</el-button>
+          </a>
+        </span>
+      </div>
       <el-table
         ref="v1table"
         v-loading="loading"
+        :data="data"
         :border="option.border"
         :show-summary="option.hasShowSummary"
         :summary-method="getSummaries"
-        :data="data"
+        :row-key="option.rowKey"
+        :default-expand-all="option.defaultExpandAll"
+        :lazy="option.lazy"
+        :load="option.lazy ? option.load : undefined"
         tooltip-effect="dark"
-        style="width: 100%"
+        :style="!operBut ? 'width: 100%' : 'width: 100%; margin-top: 10px;'"
         :row-class-name="rowClassName"
         :span-method="objectSpanMethod"
         header-row-class-name="thClassName"
@@ -133,7 +192,7 @@ data() {
         <el-table-column type="expand" v-if="option.hasExpand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item :label="item.label" v-for="(item,index) in option.expands" :key="index">
+              <el-form-item :label="item.label ? item.label : 'label'" v-for="(item,index) in option.expands" :key="index">
                 <span>{{ props.row[item.prop] }}</span>
               </el-form-item>
             </el-form>
@@ -141,26 +200,36 @@ data() {
         </el-table-column>
         <template v-for="(item,index) in option.column">
           <el-table-column
-            v-if="item.show !== false && item.show === 'template'"
-            :label="item.label"
-            :class-name="item.className ? item.className : ''"
-            :key="item.id ? item.id : index"
-            :align="item.align"
-            :width="item.width ? item.width : ''"
-            :min-width="item.minWidth ? item.minWidth : ''" >
-            <template slot-scope="scope">
-              <slot :name="item.prop" :obj="scope"></slot>
-            </template>
-          </el-table-column>
-          <el-table-column
-            v-else-if="item.show !== false && item.show !== 'template'"
-            :label="item.label"
+            :label="item.label ? item.label : 'label'"
             :prop="item.prop"
-            :class-name="item.className ? item.className : ''"
+            :class-name="item.className"
             :key="item.id ? item.id : index"
-            :align="item.align"
-            :width="item.width ? item.width : ''"
-            :min-width="item.minWidth ? item.minWidth : ''" >
+            :align="item.align ? item.align : 'left'"
+            :width="item.width"
+            :min-width="item.minWidth ? item.minWidth : 80" >
+            <template slot-scope="scope">
+              <template v-if="item.show !== false">
+                <template v-if="item.show === 'template'">
+                  <slot :name="item.prop" :obj="scope"></slot>
+                </template>
+                <template v-else-if="item.render">
+                  <render :column="item" :row="scope.row" :render="item.render" :index="index"></render>
+                </template>
+                <template v-else-if="item.formatter">
+                  <span v-html="item.formatter(scope.row, item, scope.$index)"></span>
+                </template>
+                <template v-else-if="item.newjump">
+                  <router-link
+                    target="_blank"
+                    class="newjump"
+                    :to="item.newjump(scope.row, item, scope.$index)"
+                  >{{scope.row[item.prop]}}</router-link>
+                </template>
+                <template v-else>
+                  <span>{{scope.row[item.prop]}}</span>
+                </template>
+              </template>
+            </template>
           </el-table-column>
         </template>
         <el-table-column
@@ -176,12 +245,13 @@ data() {
               <el-button
                 v-if="item.hasPermit"
                 :class="item.classname ? item.classname : ''"
-                :type="item.type"
-                :icon="item.icon"
-                :size="item.size"
-                @click.native.prevent="item.Fun(scope.row, scope.$index)">
+                :type="item.type ? item.type : ''"
+                :icon="item.icon ? item.icon : ''"
+                :size="item.size ? item.size : 'mini'"
+                :disabled="item.disabled && item.disabled(scope.row, scope.$index)"
+                @click.native.prevent="item.method(scope.row, scope.$index)">
                 {{ item.label }}
-              </el-button>
+              </el-button> {{option.operation.data.length >= 2 ? '&nbsp;' : ''}}
             </span>
           </template>
         </el-table-column>
@@ -202,9 +272,35 @@ data() {
   export default {
     name: 'recordlist',
     components: { 
-      pagination 
+      pagination,
+      render: {
+        functional: true,
+        props: {
+          row: Object,
+          render: Function,
+          index: Number,
+          column: {
+            type: Object,
+            default: null
+          }
+        },
+        render: (h, opt) => {
+          const params = {
+            row: opt.props.row,
+            index: opt.props.index
+          };
+          if (opt.props.column) params.column = opt.props.column;
+          return opt.props.render(h, params);
+        }
+      }
     },
     props: {
+      operBut: {                            // table中间button
+        type: Array,
+        default() {
+          return []
+        }
+      },
       loading: {                              // 加载中动画
         type: Boolean,
         default: false
@@ -241,21 +337,60 @@ data() {
               type: Boolean,
               default: false
             },
+            rowKey: {                         // 行数据的 Key，用来优化 Table 的渲染；在使用 reserve-selection 功能与显示树形数据时，该属性是必填的。
+              type: [Function, Number]        // 类型为 String 时，支持多层访问：user.info.id，但不支持 user.info[0].id，此种情况请使用 Function。Function(row)/String
+            },
+            defaultExpandAll: {               //是否默认展开所有行，当 Table 包含展开行存在或者为树形表格时有效
+              type: Boolean,
+              default: false
+            },
+            lazy: {                           // 是否懒加载子节点数据
+              type: Boolean,
+              default: false
+            },
+            load: {                           // 加载子节点数据的函数，lazy 为 true 时生效，函数第二个参数包含了节点的层级信息 Function(row, treeNode, resolve)
+              type : Function
+            },
             column: {
               type: Array,
               default () {
-                return [                    // 表头数据 —— className:列的class名
+                return [                       // 表头数据 —— className:列的class名
                   {
-                    id: '1',
-                    label: 'label',
-                    prop: 'prop',
-                    className: 'classname',
-                    minWidth: '80',
-                    align: 'left',
-                    show: true               // show有三种值：false隐藏当前列，true常规表格列，template自定义表格列
-      //          <template slot-scope="props" slot="example">
-      //                <a class="list-a" target="_blank" :href="'/#/bombscreen?mobile=' + props.obj.row.mobile">{{ props.obj.row.username }}</a>
-      //          </template>
+                    id: {                     
+                      type: [String, Number],
+                      default: '1' 
+                    },
+                    label: {                     
+                      type: String,
+                      default: 'label' 
+                    },
+                    prop: {                     
+                      type: String,
+                      default: 'prop' 
+                    },
+                    className: {                     
+                      type: String,
+                      default: 'className' 
+                    },
+                    minWidth: {                     
+                      type: [String, Number],
+                      default: 80
+                    },
+                    align: {                     
+                      type: String,
+                      default: 'left'
+                    },
+                    show: {
+                      type: [Boolean, String],
+                      default: true
+                    },            
+                    // show有三种值：false隐藏当前列，true常规表格列，template自定义表格列
+                    //          <template slot-scope="props" slot="example">
+                    //                <a class="list-a" target="_blank" :href="'/#/bombscreen?mobile=' + props.obj.row.mobile">{{ props.obj.row.username }}</a>
+                    //          </template>
+                    formatter: {
+                      type : Function
+                    }
                   }
                 ]
               }
@@ -263,22 +398,57 @@ data() {
             operation: {
               type: Object,
               default () {
-                return {                        // 操作功能
-                  label: '操作',                // 操作列的行首文字
-                  width: '200',                // 操作列的宽度
-                  className: '',               // 操作列的class名
-                  data: [                      // 操作列数据
+                return {                            // 操作功能
+                  label: {                          // 操作列的行首文字
+                    type: String,
+                    default: '操作' 
+                  },                
+                  width: {                         // 操作列的宽度
+                    type: [String, Number],
+                    default: 200
+                  },                
+                  className: {                     // 操作列的class名
+                    type: String, 
+                    default: '' 
+                  },               
+                  data: [                          // 操作列数据
                     {
-                      hasPermit(permitCode) {   // 是否有权限
-                        return checkPermission(permitCode)
-                      },             
-                      type: '',                    // 类型
-                      icon: '',                    // 图标类名
-                      label: '通过',               // 按钮文字
-                      Fun: 'handleSubmit',         // 点击按钮后触发的父组件事件
-                      size: 'mini',                // 按钮大小
-                      id: '1',                     // 按钮循环组件的key值
-                      classname: 'show'            // 按钮的类名
+                      id: {                     
+                        type: [String, Number],
+                        default: '1' 
+                      },                           // 按钮循环组件的key值
+                      hasPermit: {                 // 是否有权限
+                        type: String,
+                        default(permitCode) {
+                          return checkPermission(permitCode) 
+                        }
+                      },
+                      disabled: {                  // 是否可用
+                        type : Function
+                      },        
+                      type: {                      // 类型
+                        type: String,
+                        default: '' 
+                      },                    
+                      icon: {                      // 图标类名
+                        type: String,
+                        default: '' 
+                      },                          
+                      label: {                     // 按钮文字
+                        type: String,
+                        default: '通过' 
+                      },               
+                      method: {                       // 点击按钮后触发的父组件事件
+                        type : Function
+                      },         
+                      size: {                      // 按钮大小
+                        type: String,
+                        default: 'mini'
+                      },
+                      classname: {                 // 按钮的类名
+                        type: String,
+                        default: 'show'
+                      }           
                     }
                   ]
                 }
@@ -368,7 +538,7 @@ data() {
       // 在表格数据中添加class字段即为表格行类名，配合css可对表格行中的自定义标签进行样式优化
       rowClassName(rowdata) {
         const data = this.data;
-        let className = data[rowdata.rowIndex].class ? data[rowdata.rowIndex].class : '';
+        let className = data[rowdata.rowIndex] ? (data[rowdata.rowIndex].class ? data[rowdata.rowIndex].class : '') : '';
         if (className.length === 0) {
           return
         }
@@ -385,5 +555,16 @@ data() {
 <style lang="scss">
   .v1-table {
     padding: 10px 0;
+    .btn-operates {
+      a {
+        color: #fff;
+        text-decoration: none;
+        display: inline-block;
+      }
+    }
+    .newjump {
+      text-decoration: none;
+      color: dodgerblue;
+    }
   }
 </style>

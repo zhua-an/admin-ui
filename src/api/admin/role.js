@@ -7,7 +7,7 @@ export function roleList () {
   })
 }
 
-export function queryList (query) {
+export function queryPage (query) {
   return request({
     url: '/admin/role/page',
     method: 'get',

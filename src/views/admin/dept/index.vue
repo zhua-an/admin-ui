@@ -1,211 +1,225 @@
-`<!--
-  -    Copyright (c) 2018-2025, lengleng All rights reserved.
-  -
-  - Redistribution and use in source and binary forms, with or without
-  - modification, are permitted provided that the following conditions are met:
-  -
-  - Redistributions of source code must retain the above copyright notice,
-  - this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-  - notice, this list of conditions and the following disclaimer in the
-  - documentation and/or other materials provided with the distribution.
-  - Neither the name of the pig4cloud.com developer nor the names of its
-  - contributors may be used to endorse or promote products derived from
-  - this software without specific prior written permission.
-  - Author: lengleng (wangiegie@gmail.com)
-  -->
-
 <template>
-  <div class="app-container calendar-list-container">
+  <div class="dept">
     <basic-container>
-      <div class="filter-container">
-        <el-button-group>
-          <el-button type="primary"
-                     v-if="deptManager_btn_add"
-                     icon="plus"
-                     @click="handlerAdd">添加
-          </el-button>
-          <el-button type="primary"
-                     v-if="deptManager_btn_edit"
-                     icon="edit"
-                     @click="handlerEdit">编辑
-          </el-button>
-          <el-button type="primary"
-                     v-if="deptManager_btn_del"
-                     icon="delete"
-                     @click="handleDelete">删除
-          </el-button>
-        </el-button-group>
-      </div>
-
       <el-row>
-        <el-col :span="8"
-                style='margin-top:15px;'>
-          <el-tree class="filter-tree"
-                   :data="treeData"
-                   node-key="id"
-                   highlight-current
-                   :props="defaultProps"
-                   :filter-node-method="filterNode"
-                   @node-click="getNodeData"
-                   default-expand-all>
-          </el-tree>
-        </el-col>
-        <el-col :span="16"
-                style='margin-top:15px;'>
-          <el-card class="box-card">
-            <el-form :label-position="labelPosition"
-                     label-width="80px"
-                     :rules="rules"
-                     :model="form"
-                     ref="form">
-              <el-form-item label="父级节点"
-                            prop="parentId">
-                <el-input v-model="form.parentId"
-                          :disabled="formEdit"
-                          placeholder="请输入父级节点"></el-input>
-              </el-form-item>
-              <el-form-item label="节点编号"
-                            prop="deptId"
-                            v-if="formEdit">
-                <el-input v-model="form.deptId"
-                          :disabled="formEdit"
-                          placeholder="节点编号"></el-input>
-              </el-form-item>
-              <el-form-item label="部门名称"
-                            prop="name">
-                <el-input v-model="form.name"
-                          :disabled="formEdit"
-                          placeholder="请输入名称"></el-input>
-              </el-form-item>
-              <el-form-item label="排序"
-                            prop="orderNum">
-                <el-input type="number"
-                          v-model="form.sort"
-                          :disabled="formEdit"
-                          placeholder="请输入排序"></el-input>
-              </el-form-item>
-              <el-form-item v-if="formStatus == 'update'">
-                <el-button type="primary"
-                           @click="update">更新
-                </el-button>
-                <el-button @click="onCancel">取消</el-button>
-              </el-form-item>
-              <el-form-item v-if="formStatus == 'create'">
-                <el-button type="primary"
-                           @click="create">保存
-                </el-button>
-                <el-button @click="onCancel">取消</el-button>
-              </el-form-item>
-            </el-form>
-          </el-card>
-        </el-col>
+        <Search 
+          :tableSearch="tableSearch"
+          @handleSearch="handleSearch"
+        />
       </el-row>
+      <v1-table 
+        :data="table.data"
+        :operBut="table.operBut"
+        :loading="table.loading" 
+        :option="table.option"
+        :pagination="table.page"
+        @onHandleSelectionChange="onHandleSelectionChange"
+        @handleSearch="handleSearch">
+        <template slot-scope="props" slot="delFlag">
+          <el-tag v-if="props.obj.row.delFlag === 1"
+            :type="danger">是</el-tag>
+          <el-tag v-else>否</el-tag>
+        </template>
+      </v1-table>
+      <el-dialog
+        :title="title"
+        :close-on-click-modal="false"
+        :visible.sync="dialogDeptVisible"
+        width="30%">
+          <el-form :model="form" :rules="rules" ref="form" label-width="100px">
+            <el-form-item label="父级部门"
+                          prop="parentName">
+              <el-input v-model="form.parentName"
+                        disabled ></el-input>
+            </el-form-item>
+            <el-form-item label="部门名称"
+                          prop="deptName">
+              <el-input v-model="form.deptName"
+                        placeholder="请输入名称"></el-input>
+            </el-form-item>
+            <el-form-item label="排序"
+                          prop="sort">
+              <el-input type="number"
+                        v-model="form.sort"
+                        placeholder="请输入排序"></el-input>
+            </el-form-item>
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="resetForm('form'), dialogDeptVisible = false">取 消</el-button>
+            <el-button type="primary" @click="submitForm('form')">确 定</el-button>
+          </span>
+        </el-dialog>
     </basic-container>
   </div>
 </template>
 
 <script>
-  import {addObj, delObj, fetchTree, getObj, putObj} from '@/api/admin/dept'
-  import {mapGetters} from 'vuex'
+  import Search from '@/components/search/search'
+  import V1Table from '@/components/table/v1-table'
+  import {addObj, delObj, queryPage, updateObj} from '@/api/admin/dept'
 
   export default {
-    name: 'dept',
+    name: 'dept_page',
+    components: {
+      Search,
+      V1Table
+    },
     data() {
       return {
-        list: null,
-        total: null,
-        formEdit: true,
-        formAdd: true,
-        formStatus: '',
-        showElement: false,
-        typeOptions: ['0', '1'],
-        methodOptions: ['GET', 'POST', 'PUT', 'DELETE'],
-        listQuery: {
-          name: undefined
+        title: '',
+        dialogDeptVisible: false,
+        form: {
+          parentId: undefined,
+          parentName: undefined,
+          deptName: undefined,
+          sort: undefined,
+          id: undefined
         },
-        treeData: [],
-        defaultProps: {
-          children: 'children',
-          label: 'name'
+        checkedData: [],
+        searchForm: {
+          deptName: ''
+        },
+        tableSearch: [
+          {
+            label: '部门名称',
+            value: 'deptName',
+          }
+        ],
+        table: {
+          operBut: [{
+            title: '添加',
+            hasPermit: 'sys_dept_add',
+            method: this.handleAdd
+          }],
+          loading: true,
+          option: {
+            hasIndex: true,
+            hasSelect: true,
+            hasOperation: true,
+            border: true,
+            rowKey: 'id',
+            column: [
+              {
+                label: '部门名称',
+                prop: 'deptName',
+                // width: '180',
+                align: 'center'
+              },{
+                label: '排序',
+                prop: 'sort',
+                // width: '100',
+                align: 'center'
+              },{
+                label: '状态',
+                prop: 'delFlag',
+                // width: '100',
+                show: 'template',
+                align: 'center'
+              },{
+                label: '修改日期',
+                prop: 'updateTime',
+                // width: '180',
+                align: 'center'
+              },{
+                label: '创建日期',
+                prop: 'createTime',
+                // width: '180',
+                align: 'center'
+              }
+            ],
+            operation: {            
+              label: '操作',               
+              width: '180',               
+              align: 'center',      
+              className: '',      
+              data: [                   
+                {
+                  type: 'success',
+                  hasPermit: 'sys_dept_edit',
+                  label: '编辑',               
+                  method: this.handleEdit,
+                  id: '1'                    
+                }, {
+                  type: 'danger',
+                  hasPermit: 'sys_dept_del',
+                  label: '删除',
+                  disabled(row, index) {
+                    return row.hasChildren
+                  },
+                  method: this.handleDelete,  
+                  id: '2'                     
+                }
+              ]
+            }
+          },
+          data: [],
+          page: {
+            total: 0, 
+            currentPage: 1, 
+            pageSize: 20, 
+          }
         },
         rules: {
-          parentId: [
-            {required: true, message: '请输入父级节点', trigger: 'blur'}
-          ],
-          deptId: [
-            {required: true, message: '请输入节点编号', trigger: 'blur'}
-          ],
-          name: [
+          deptName: [
             {required: true, message: '请输入部门名称', trigger: 'blur'}
-          ],
-        },
-        labelPosition: 'right',
-        form: {
-          name: undefined,
-          orderNum: undefined,
-          parentId: undefined,
-          deptId: undefined
-        },
-        currentId: 0,
-        deptManager_btn_add: false,
-        deptManager_btn_edit: false,
-        deptManager_btn_del: false
+          ]
+        }
       }
     },
     created() {
       this.getList()
-      this.deptManager_btn_add = this.permissions['sys_dept_add']
-      this.deptManager_btn_edit = this.permissions['sys_dept_edit']
-      this.deptManager_btn_del = this.permissions['sys_dept_del']
-    },
-    computed: {
-      ...mapGetters([
-        'elements',
-        'permissions'
-      ])
     },
     methods: {
       getList() {
-        fetchTree(this.listQuery).then(response => {
-          this.treeData = response.data.data
+        this.table.loading = true
+        let data = {
+          current: this.table.page.currentPage,
+          size: this.table.page.pageSize,
+          searchMap: this.searchForm
+        }
+        queryPage(data).then(response => {
+          this.table.data = response.data.data.records
+          this.table.page.total = response.data.data.total
+          this.checkedData = []
+          this.table.loading = false
+        }).catch(err => {
+          this.checkedData = []
+          this.table.loading = false
         })
       },
-      filterNode(value, data) {
-        if (!value) return true
-        return data.label.indexOf(value) !== -1
-      },
-      getNodeData(data) {
-        if (!this.formEdit) {
-          this.formStatus = 'update'
+      handleSearch(page) {
+        if (page) {
+          this.table.page.currentPage = page.pageNum
+          this.table.page.pageSize = page.pageSize
         }
-        getObj(data.id).then(response => {
-          this.form = response.data.data
-        })
-        this.currentId = data.id
-        this.showElement = true
+        this.getList()
       },
-      handlerEdit() {
-        if (this.form.deptId) {
-          this.formEdit = false
-          this.formStatus = 'update'
-        }
+      handleEdit(row, index) {
+        this.title = '编辑'
+        this.form.id = row.id
+        this.form.parentId = row.parentId
+        this.form.parentName = row.parentName
+        this.form.deptName = row.deptName
+        this.form.sort = row.sort
+        this.dialogDeptVisible = true
       },
-      handlerAdd() {
-        this.resetForm()
-        this.formEdit = false
-        this.formStatus = 'create'
+      handleAdd() {
+        this.title = '添加'
+        this.form.id = ''
+        this.form.parentId = ''
+        this.form.parentName = ''
+        this.form.deptName = ''
+        this.form.sort = ''
+        this.dialogDeptVisible = true
       },
-      handleDelete() {
+      handleDelete(row, index) {
         this.$confirm('此操作将永久删除, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          delObj(this.currentId).then(() => {
+          delObj(row.id).then(() => {
             this.getList()
-            this.resetForm()
-            this.onCancel()
             this.$notify({
               title: '成功',
               message: '删除成功',
@@ -215,45 +229,45 @@
           })
         })
       },
-      update() {
-        this.$refs.form.validate((valid) => {
-          if (!valid) return
-          putObj(this.form).then(() => {
-            this.getList()
-            this.$notify({
-              title: '成功',
-              message: '更新成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            if(!this.form.id) {
+              addObj(this.form).then(() => {
+                this.getList()
+                this.$notify({
+                  title: '成功',
+                  message: '创建成功',
+                  type: 'success',
+                  duration: 2000
+                })
+              })
+            } else {
+              updateObj(this.form).then(() => {
+                this.getList()
+                this.$notify({
+                  title: '成功',
+                  message: '修改成功',
+                  type: 'success',
+                  duration: 2000
+                })
+                resetForm(formName)
+              })
+            }
+          }
         })
-
       },
-      create() {
-        this.$refs.form.validate((valid) => {
-          if (!valid) return
-          addObj(this.form).then(() => {
-            this.getList()
-            this.$notify({
-              title: '成功',
-              message: '创建成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        })
+      resetForm(formName) {
+        this.$refs[formName].resetFields()
       },
-      onCancel() {
-        this.formEdit = true
-        this.formStatus = ''
-      },
-      resetForm() {
-        this.form = {
-          parentId: this.currentId,
-        }
+      onHandleSelectionChange(data) {
+        this.checkedData = data
       }
     }
   }
 </script>
-
+<style lang="scss">
+  .dept {
+    height: 100%;
+  }
+</style>

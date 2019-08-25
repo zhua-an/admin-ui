@@ -174,6 +174,9 @@ const user = {
 
   },
   mutations: {
+    SET_USER_INFO: (state, userInfo) => {
+      state.access_token = userInfo
+    },
     SET_ACCESS_TOKEN: (state, access_token) => {
       state.access_token = access_token
       setStore({

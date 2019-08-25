@@ -1,8 +1,8 @@
 import request from '@/router/axios'
 
-export function fetchDeptTree (query) {
+export function queryPage (query) {
   return request({
-    url: '/admin/dept/user-tree',
+    url: '/admin/dept/page',
     method: 'get',
     params: query
   })
@@ -18,30 +18,23 @@ export function fetchTree (query) {
 
 export function addObj (obj) {
   return request({
-    url: '/admin/dept/',
+    url: '/admin/dept/add',
     method: 'post',
     data: obj
   })
 }
 
-export function getObj (id) {
-  return request({
-    url: '/admin/dept/' + id,
-    method: 'get'
-  })
-}
-
 export function delObj (id) {
   return request({
-    url: '/admin/dept/' + id,
+    url: '/admin/dept/delete/' + id,
     method: 'delete'
   })
 }
 
-export function putObj (obj) {
+export function updateObj (obj) {
   return request({
-    url: '/admin/dept/',
-    method: 'put',
+    url: '/admin/dept/update',
+    method: 'post',
     data: obj
   })
 }

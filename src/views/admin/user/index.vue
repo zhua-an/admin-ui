@@ -7,16 +7,9 @@
           @handleSearch="handleSearch"
         />
       </el-row>
-      <el-row>
-        <el-button-group>
-          <el-button type="primary"
-                      v-if="checkPermission('sys_user_add')"
-                      @click="handlerAdd">添加
-          </el-button>
-        </el-button-group>
-      </el-row>
       <v1-table 
-        :data="table.data" 
+        :data="table.data"
+        :operBut="table.operBut"
         :loading="table.loading" 
         :option="table.option"
         :pagination="table.page"
@@ -33,14 +26,14 @@
 </template>
 
 <script>
-  import Search from '@/components/search/search';
-  import v1Table from '@/components/table/v1-table'
-  import {addObj, delObj, queryList, getObj, putObj} from "@/api/admin/user";
+  import Search from '@/components/search/search'
+  import V1Table from '@/components/table/v1-table'
+  import {addObj, delObj, queryPage, getObj, putObj} from "@/api/admin/user";
   export default {
-    name: "table_user",
+    name: "user_page",
     components: {
       Search,
-      v1Table 
+      V1Table
     },
     data() {
       return {
@@ -55,6 +48,11 @@
           }
         ],
         table: {
+          operBut: [{
+            title: '添加',
+            hasPermit: 'sys_user_add',
+            method: this.handleAdd
+          }],
           loading: true,
           option: {
             hasIndex: true,
@@ -113,20 +111,19 @@
               label: '操作',                // 操作列的行首文字
               width: '180',                // 操作列的宽度
               align: 'center',
-              className: '',               // 操作列的class名
               data: [                      // 操作列数据
                 {
                   type: 'success',
                   hasPermit: 'sys_user_edit',
                   label: '编辑',                // 按钮文字
-                  Fun: handleEdit,             // 点击按钮后触发的父组件事件
+                  method: this.handleEdit,        // 点击按钮后触发的父组件事件
                   size: 'mini',                // 按钮大小
                   id: '1'                     // 按钮循环组件的key值
                 }, {
                   type: 'danger',
                   hasPermit: 'sys_user_del',
                   label: '删除',                // 按钮文字
-                  Fun: handleDelete,           // 点击按钮后触发的父组件事件
+                  method: this.handleDelete,      // 点击按钮后触发的父组件事件
                   size: 'mini',                // 按钮大小
                   id: '2'                     // 按钮循环组件的key值
                 }
@@ -160,7 +157,7 @@
           size: this.table.page.pageSize,
           searchMap: this.searchForm
         }
-        queryList(data).then(response => {
+        queryPage(data).then(response => {
           this.table.data = response.data.data.records
           this.table.page.total = response.data.data.total
           this.checkedData = []
@@ -170,7 +167,7 @@
           this.table.loading = false
         })
       },
-      handlerAdd() {
+      handleAdd() {
 
       },
       handleEdit() {

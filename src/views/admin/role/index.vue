@@ -7,16 +7,9 @@
           @handleSearch="handleSearch"
         />
       </el-row>
-      <el-row>
-        <el-button-group>
-          <el-button type="primary"
-                      v-if="checkPermission('sys_role_add')"
-                      @click="handlerAdd">添加
-          </el-button>
-        </el-button-group>
-      </el-row>
       <v1-table 
-        :data="table.data" 
+        :data="table.data"
+        :operBut="table.operBut"
         :loading="table.loading" 
         :option="table.option"
         :pagination="table.page"
@@ -34,20 +27,20 @@
       :close-on-click-modal="false"
       :visible.sync="dialogRoleVisible"
       width="30%">
-      <el-form :model="roleForm" :rules="rules" ref="roleForm" label-width="100px">
+      <el-form :model="form" :rules="rules" ref="form" label-width="100px">
         <el-form-item label="角色名称" prop="roleName">
-          <el-input v-model="roleForm.roleName"></el-input>
+          <el-input v-model="form.roleName"></el-input>
         </el-form-item>
         <el-form-item label="角色代码" prop="roleCode">
-          <el-input v-model="roleForm.roleCode"></el-input>
+          <el-input v-model="form.roleCode"></el-input>
         </el-form-item>
         <el-form-item label="角色描述" prop="roleDesc">
-          <el-input type="textarea" v-model="roleForm.roleDesc"></el-input>
+          <el-input type="textarea" v-model="form.roleDesc"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="resetForm('roleForm'), dialogRoleVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('roleForm')">确 定</el-button>
+        <el-button @click="resetForm('form'), dialogRoleVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('form')">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog title="分配权限"
@@ -76,23 +69,23 @@
 </template>
 
 <script>
-  import Search from '@/components/search/search';
+  import Search from '@/components/search/search'
   import V1Table from '@/components/table/v1-table'
-  import {addObj, delObj, queryList, fetchRoleTree, getObj, updateRolePermit, updateObj} from '@/api/admin/role'
+  import {addObj, delObj, queryPage, fetchRoleTree, getObj, updateRolePermit, updateObj} from '@/api/admin/role'
   import {mapGetters} from 'vuex'
 
   export default {
-    name: 'table_role',
+    name: 'role_page',
     components: {
       Search,
-      V1Table 
+      V1Table
     },
     data() {
       return {
         title: '',
         dialogRoleVisible: false,
         dialogPermissionVisible: false,
-        roleForm: {
+        form: {
           id: '',
           roleName: '',
           roleCode: '',
@@ -116,6 +109,12 @@
           }
         ],
         table: {
+          operBut: [{
+            title: '添加',
+            hasPermit: 'sys_role_add',
+            href: '',
+            method: this.handleAdd
+          }],
           loading: true,
           option: {
             hasIndex: true,
@@ -165,24 +164,24 @@
                   type: 'primary',
                   hasPermit: 'sys_role_edit',
                   label: '编辑',                // 按钮文字
-                  Fun: (row, index) => {        // 点击按钮后触发的父组件事件
+                  method: (row, index) => {        // 点击按钮后触发的父组件事件
                     this.handleEdit(row, index)
-                  },         
-                  size: 'mini',                // 按钮大小
+                  },
+                  size: 'mini',
                   id: '1'                     // 按钮循环组件的key值
                 }, {
                   type: 'danger',
                   hasPermit: 'sys_role_del',
                   label: '删除',                // 按钮文字
-                  Fun: this.handleDelete,           // 点击按钮后触发的父组件事件
-                  size: 'mini',                // 按钮大小
-                  id: '2'                     // 按钮循环组件的key值
+                  method: this.handleDelete,       // 点击按钮后触发的父组件事件
+                  size: 'mini',
+                  id: '2'                       // 按钮循环组件的key值
                 }, {
                   type: 'success',
                   hasPermit: 'sys_role_auth',
                   label: '授权',                // 按钮文字
-                  Fun: this.handlePermit,           // 点击按钮后触发的父组件事件
-                  size: 'mini',                // 按钮大小
+                  method: this.handlePermit,      // 点击按钮后触发的父组件事件
+                  size: 'mini',
                   id: '3'                     // 按钮循环组件的key值
                 }
               ]
@@ -223,7 +222,7 @@
           size: this.table.page.pageSize,
           searchMap: this.searchForm
         }
-        queryList(data).then(response => {
+        queryPage(data).then(response => {
           this.table.data = response.data.data.records
           this.table.page.total = response.data.data.total
           this.checkedData = []
@@ -237,17 +236,20 @@
         if (!value) return true
         return data.label.indexOf(value) !== -1
       },
-      handlerAdd() {
+      handleAdd() {
         this.title = '添加'
-        this.roleForm.id = ''
+        this.form.id = ''
+        this.form.roleName = ''
+        this.form.roleCode = ''
+        this.form.roleDesc = ''
         this.dialogRoleVisible = true
       },
       handleEdit(row, index) {
         this.title = '编辑'
-        this.roleForm.id = row.id
-        this.roleForm.roleName = row.roleName
-        this.roleForm.roleCode = row.roleCode
-        this.roleForm.roleDesc = row.roleDesc
+        this.form.id = row.id
+        this.form.roleName = row.roleName
+        this.form.roleCode = row.roleCode
+        this.form.roleDesc = row.roleDesc
         this.dialogRoleVisible = true
       },
       handleDelete(row, index) {
@@ -271,7 +273,7 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            if(!this.roleForm.id) {
+            if(!this.form.id) {
               addObj(this.form).then(() => {
                 this.getList()
                 this.$notify({
