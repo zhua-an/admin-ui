@@ -8,9 +8,9 @@ export function queryPage (query) {
   })
 }
 
-export function fetchTree (query) {
+export function getTree (query) {
   return request({
-    url: '/admin/dept/tree',
+    url: '/admin/dept/getTree',
     method: 'get',
     params: query
   })

@@ -1,8 +1,8 @@
 import request from '@/router/axios'
 
-export function roleList () {
+export function getRoleList () {
   return request({
-    url: '/admin/role/roleList',
+    url: '/admin/role/getRoleList',
     method: 'get'
   })
 }
@@ -12,13 +12,6 @@ export function queryPage (query) {
     url: '/admin/role/page',
     method: 'get',
     params: query
-  })
-}
-
-export function deptRoleList () {
-  return request({
-    url: '/admin/role/list',
-    method: 'get'
   })
 }
 

@@ -52,7 +52,7 @@ Router.beforeEach((to, from, next) => {
     } else if (to.path === '/login') {
       next({path: '/'})
     } else {
-      if (Store.getters.roles.length === 0) {
+      if (Store.getters.roles.length === 0 && Object.keys(Store.getters.userInfo).length === 0) {
         Store.dispatch('GetUserInfo').then(() => {
           next({...to, replace: true})
         }).catch(() => {

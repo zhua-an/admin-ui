@@ -10,7 +10,7 @@ export function queryPage (query) {
 
 export function addObj (obj) {
   return request({
-    url: '/admin/sysuser',
+    url: '/admin/sysuser/add',
     method: 'post',
     data: obj
   })
@@ -23,24 +23,26 @@ export function getObj (id) {
   })
 }
 
-export function delObj (id) {
+export function lockOrUnlock (id) {
   return request({
-    url: '/admin/sysuser/' + id,
-    method: 'delete'
+    url: '/admin/sysuser/lockOrUnlock/' + id,
+    method: 'post'
   })
 }
 
-export function putObj (obj) {
+export function updateObj (obj) {
   return request({
-    url: '/admin/sysuser',
-    method: 'put',
+    url: '/admin/sysuser/update',
+    method: 'post',
     data: obj
   })
 }
 
-export function getDetails (obj) {
+export function delObj (id) {
   return request({
-    url: '/admin/sysuser/details/' + obj,
-    method: 'get'
+    url: '/admin/sysuser/lockOrUnlock/' + id,
+    method: 'delete'
   })
 }
+
+

@@ -7,7 +7,7 @@
           @handleSearch="handleSearch"
         />
       </el-row>
-      <v1-table 
+      <data-table 
         :data="table.data"
         :operBut="table.operBut"
         :loading="table.loading" 
@@ -16,11 +16,11 @@
         @onHandleSelectionChange="onHandleSelectionChange"
         @handleSearch="handleSearch">
         <template slot-scope="props" slot="delFlag">
-          <el-tag v-if="props.obj.row.delFlag === 1"
-            :type="danger">是</el-tag>
-          <el-tag v-else>否</el-tag>
+          <el-tag v-if="props.obj.row.delFlag === '1'"
+            type="danger">删除</el-tag>
+          <el-tag v-else>正常</el-tag>
         </template>
-      </v1-table>
+      </data-table>
       <el-dialog
         :title="title"
         :close-on-click-modal="false"
@@ -55,14 +55,14 @@
 
 <script>
   import Search from '@/components/search/search'
-  import V1Table from '@/components/table/v1-table'
-  import {addObj, delObj, queryPage, updateObj} from '@/api/admin/dept'
+  import DataTable from '@/components/table/data-table'
+  import {addObj, delObj, queryPage, updateObj} from '@/api/upms/dept'
 
   export default {
     name: 'dept_page',
     components: {
       Search,
-      V1Table
+      DataTable
     },
     data() {
       return {
@@ -130,8 +130,7 @@
             operation: {            
               label: '操作',               
               width: '180',               
-              align: 'center',      
-              className: '',      
+              align: 'center',     
               data: [                   
                 {
                   type: 'success',
@@ -144,7 +143,7 @@
                   hasPermit: 'sys_dept_del',
                   label: '删除',
                   disabled(row, index) {
-                    return row.hasChildren
+                    return row.children && row.children.length > 0
                   },
                   method: this.handleDelete,  
                   id: '2'                     
@@ -205,12 +204,24 @@
       },
       handleAdd() {
         this.title = '添加'
+        if(this.checkedData && this.checkedData.length == 1) {
+          this.form.parentId = this.checkedData[0].id
+          this.form.parentName = this.checkedData[0].deptName
+        } else if(this.checkedData && this.checkedData.length > 1) {
+          this.$message({
+            message: '不能同时选择多个父级部门',
+            type: 'warning'
+          })
+          return 
+        } else {
+          this.form.parentId = -1
+          this.form.parentName = ''
+        }
         this.form.id = ''
-        this.form.parentId = ''
-        this.form.parentName = ''
         this.form.deptName = ''
         this.form.sort = ''
         this.dialogDeptVisible = true
+        
       },
       handleDelete(row, index) {
         this.$confirm('此操作将永久删除, 是否继续?', '提示', {
@@ -241,6 +252,7 @@
                   type: 'success',
                   duration: 2000
                 })
+                this.dialogDeptVisible = false
               })
             } else {
               updateObj(this.form).then(() => {
@@ -251,7 +263,7 @@
                   type: 'success',
                   duration: 2000
                 })
-                resetForm(formName)
+                this.dialogDeptVisible = false
               })
             }
           }

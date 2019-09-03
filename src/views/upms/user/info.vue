@@ -1,20 +1,3 @@
-<!--
-  -    Copyright (c) 2018-2025, lengleng All rights reserved.
-  -
-  - Redistribution and use in source and binary forms, with or without
-  - modification, are permitted provided that the following conditions are met:
-  -
-  - Redistributions of source code must retain the above copyright notice,
-  - this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-  - notice, this list of conditions and the following disclaimer in the
-  - documentation and/or other materials provided with the distribution.
-  - Neither the name of the pig4cloud.com developer nor the names of its
-  - contributors may be used to endorse or promote products derived from
-  - this software without specific prior written permission.
-  - Author: lengleng (wangiegie@gmail.com)
-  -->
-
 <template>
   <div class="app-container calendar-list-container">
     <basic-container>
@@ -33,19 +16,22 @@
                      label-width="100px"
                      v-if="switchStatus==='userManager'"
                      class="demo-ruleForm">
-              <el-form-item label="用户名"
+              <el-form-item label="用户名" :key="username"
                             prop="username">
                 <el-input type="text"
                           v-model="ruleForm2.username"
                           disabled></el-input>
               </el-form-item>
-              <el-form-item label="手机号" prop="phone">
+              <el-form-item label="手机号" prop="phone" :key="phone">
                 <el-input v-model="ruleForm2.phone" placeholder="验证码登录使用"></el-input>
+              </el-form-item>
+              <el-form-item label="邮箱" prop="email" :key="email">
+                <el-input v-model="ruleForm2.email" placeholder="请输入邮箱地址"></el-input>
               </el-form-item>
               <el-form-item label="头像">
                 <el-upload
                   class="avatar-uploader"
-                  action="/admin/file/upload"
+                  action="/cms/file/upload"
                   :headers="headers"
                   :show-file-list="false"
                   :on-success="handleAvatarSuccess">
@@ -72,19 +58,19 @@
                      label-width="100px"
                      v-if="switchStatus==='passwordManager'"
                      class="demo-ruleForm">
-              <el-form-item label="原密码"
+              <el-form-item label="原密码" :key="password"
                             prop="password">
                 <el-input type="password"
                           v-model="ruleForm2.password"
                           auto-complete="off"></el-input>
               </el-form-item>
-              <el-form-item label="密码"
+              <el-form-item label="密码" :key="newpassword1"
                             prop="newpassword1">
                 <el-input type="password"
                           v-model="ruleForm2.newpassword1"
                           auto-complete="off"></el-input>
               </el-form-item>
-              <el-form-item label="确认密码"
+              <el-form-item label="确认密码" :key="newpassword2"
                             prop="newpassword2">
                 <el-input type="password"
                           v-model="ruleForm2.newpassword2"
@@ -106,8 +92,9 @@
 
 
 <script>
-  import {handleDown} from "@/api/admin/user";
+  import {handleDown} from "@/api/upms/user";
   import {handleImg, openWindow} from '@/util/util'
+    import {isEmail, isMobile} from '@/util/validate'
   import {mapState} from 'vuex'
   import store from "@/store";
   import request from '@/router/axios'
@@ -125,6 +112,28 @@
           callback()
         }
       }
+      var validateMobilePhone = (rule, value, callback) => {
+        if (value) {
+          if (!isMobile(value)) {
+            callback(new Error('请输入有效的手机号码'))
+          } else {
+            callback()
+          }
+        }else {
+          callback()
+        }
+      }
+      var validateEmail = (rule, value, callback) => {
+        if (value) {
+          if (!isEmail(value)) {
+            callback(new Error('请输入有效的邮箱'))
+          } else {
+            callback()
+          }
+        }else {
+          callback()
+        }
+      }
       return {
         switchStatus: '',
         avatarUrl: '',
@@ -138,12 +147,19 @@
           newpassword1: '',
           newpassword2: '',
           avatar: '',
-          phone: ''
+          phone: '',
+          email: ''
         },
         rules2: {
           password: [{required: true, min: 6, message: '原密码不能为空且不少于6位', trigger: 'change'}],
           newpassword1: [{required: false, min: 6, message: '不少于6位', trigger: 'change'}],
-          newpassword2: [{required: false, validator: validatePass, trigger: 'blur'}]
+          newpassword2: [{required: false, validator: validatePass, trigger: 'blur'}],
+          phone: [
+            {validator: validateMobilePhone, trigger: 'blur'}
+          ],
+          email: [
+            {validator: validateEmail, trigger: 'blur'}
+          ]
         }
       }
     },
@@ -170,8 +186,8 @@
         this.$refs[formName].validate(valid => {
           if (valid) {
             request({
-              url: '/admin/user/edit',
-              method: 'put',
+              url: '/cms/sysuser/update',
+              method: 'post',
               data: this.ruleForm2
             }).then(response => {
               if (response.data.data) {

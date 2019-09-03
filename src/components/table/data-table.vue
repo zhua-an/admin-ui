@@ -1,14 +1,15 @@
 <!-- 
 使用：
-<v1-table 
-        :data="table.data" 
-        :loading="table.loading" 
-        :option="table.option"
-        :pagination="table.page"
-        @onHandleSelectionChange="onHandleSelectionChange"
-        @search="search">
-import v1Table from '@/components/table/v1-table'
-components: { v1Table }
+<data-table 
+  :data="table.data" 
+  :loading="table.loading" 
+  :option="table.option"
+  :pagination="table.page"
+  @onHandleSelectionChange="onHandleSelectionChange"
+  @search="search">
+</data-table>
+import data-table from '@/components/table/data-table'
+components: { data-table }
 data() {
    return {
        table: {
@@ -172,6 +173,7 @@ data() {
         :default-expand-all="option.defaultExpandAll"
         :lazy="option.lazy"
         :load="option.lazy ? option.load : undefined"
+        :tree-props="option.treeProps"
         tooltip-effect="dark"
         :style="!operBut ? 'width: 100%' : 'width: 100%; margin-top: 10px;'"
         :row-class-name="rowClassName"
@@ -250,7 +252,7 @@ data() {
                 :size="item.size ? item.size : 'mini'"
                 :disabled="item.disabled && item.disabled(scope.row, scope.$index)"
                 @click.native.prevent="item.method(scope.row, scope.$index)">
-                {{ item.label }}
+                {{ getObjType(item.label)  === 'string' ? item.label : item.label(scope.row) }}
               </el-button> {{option.operation.data.length >= 2 ? '&nbsp;' : ''}}
             </span>
           </template>
@@ -321,7 +323,7 @@ data() {
               type: Boolean,
               default: false
             },
-            hasIndex: {                       // 优化行数
+            hasIndex: {                       // 有无行数
               type: Boolean,
               default: false
             },
@@ -338,9 +340,9 @@ data() {
               default: false
             },
             rowKey: {                         // 行数据的 Key，用来优化 Table 的渲染；在使用 reserve-selection 功能与显示树形数据时，该属性是必填的。
-              type: [Function, Number]        // 类型为 String 时，支持多层访问：user.info.id，但不支持 user.info[0].id，此种情况请使用 Function。Function(row)/String
+              type: [Function, String]        // 类型为 String 时，支持多层访问：user.info.id，但不支持 user.info[0].id，此种情况请使用 Function。Function(row)/String
             },
-            defaultExpandAll: {               //是否默认展开所有行，当 Table 包含展开行存在或者为树形表格时有效
+            defaultExpandAll: {               // 是否默认展开所有行，当 Table 包含展开行存在或者为树形表格时有效
               type: Boolean,
               default: false
             },
@@ -349,7 +351,19 @@ data() {
               default: false
             },
             load: {                           // 加载子节点数据的函数，lazy 为 true 时生效，函数第二个参数包含了节点的层级信息 Function(row, treeNode, resolve)
-              type : Function
+              type : Function,
+              default: function(row, treeNode, resolve) {
+                resolve([])
+              }
+            },
+            treeProps: {                      // 渲染嵌套数据的配置选项	
+              type: Object,
+              default() {
+                return { 
+                  hasChildren: 'hasChildren', 
+                  children: 'children' 
+                }
+              }
             },
             column: {
               type: Array,
@@ -388,8 +402,17 @@ data() {
                     //          <template slot-scope="props" slot="example">
                     //                <a class="list-a" target="_blank" :href="'/#/bombscreen?mobile=' + props.obj.row.mobile">{{ props.obj.row.username }}</a>
                     //          </template>
-                    formatter: {
-                      type : Function
+                    formatter: {                            // 	用来格式化内容
+                      type : Function,
+                      default: function(row, column, cellValue, index) {
+                        return cellValue
+                      }
+                    },
+                    newjump: {                              // 用来跳转路由  function(row, obj, index)
+                      type : Function,
+                      default: function(row, obj, index) {
+                        return '#'
+                      }
                     }
                   }
                 ]
@@ -413,10 +436,10 @@ data() {
                   },               
                   data: [                          // 操作列数据
                     {
-                      id: {                     
+                      id: {                        // 按钮循环组件的key值
                         type: [String, Number],
                         default: '1' 
-                      },                           // 按钮循环组件的key值
+                      },                           
                       hasPermit: {                 // 是否有权限
                         type: String,
                         default(permitCode) {
@@ -435,10 +458,10 @@ data() {
                         default: '' 
                       },                          
                       label: {                     // 按钮文字
-                        type: String,
-                        default: '通过' 
+                        type: [String, Function],
+                        default: '通过'
                       },               
-                      method: {                       // 点击按钮后触发的父组件事件
+                      method: {                    // 点击按钮后触发的父组件事件
                         type : Function
                       },         
                       size: {                      // 按钮大小
@@ -547,6 +570,25 @@ data() {
       },
       handleSearch(page) {
         this.$emit('handleSearch', page)
+      },
+      getObjType(obj) {
+        var toString = Object.prototype.toString
+        var map = {
+          '[object Boolean]': 'boolean',
+          '[object Number]': 'number',
+          '[object String]': 'string',
+          '[object Function]': 'function',
+          '[object Array]': 'array',
+          '[object Date]': 'date',
+          '[object RegExp]': 'regExp',
+          '[object Undefined]': 'undefined',
+          '[object Null]': 'null',
+          '[object Object]': 'object'
+        }
+        if (obj instanceof Element) {
+          return 'element'
+        }
+        return map[toString.call(obj)]
       }
     }
   }

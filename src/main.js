@@ -15,6 +15,10 @@ import * as filters from '@/filters' // 全局filter
 import Table from '@/components/table'
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/styles/common.scss'
+// import the component
+import Treeselect from '@riophae/vue-treeselect'
+// import the styles
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 // 引入avue的包
 import Avue from '@smallwei/avue'
 import '@smallwei/avue/lib/index.css'
@@ -27,6 +31,7 @@ Vue.prototype.validatenull = validatenull
 
 Vue.use(ElementUI)
 Vue.use(Avue)
+Vue.use(Treeselect)
 Vue.use(VueAxios, axios)
 Vue.use(Table)
 /**

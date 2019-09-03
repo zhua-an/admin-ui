@@ -42,7 +42,7 @@
 </template>
 
 <script>
-  import {delObj, fetchList} from '@/api/admin/log'
+  import {delObj, fetchList} from '@/api/system/log'
   import {tableOption} from '@/const/crud/admin/log'
   import {mapGetters} from 'vuex'
 

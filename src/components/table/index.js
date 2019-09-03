@@ -1,7 +1,7 @@
-import v1Table from './v1-table'
+import DataTable from './data-table.vue'
 
 export default {
   install (Vue) {
-    Vue.use(v1Table)
+    Vue.use(DataTable)
   }
 }

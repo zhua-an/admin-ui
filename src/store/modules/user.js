@@ -3,7 +3,7 @@ import {isURL} from '@/util/validate'
 import {getUserInfo, loginByMobile, loginBySocial, loginByUsername, logout, refreshToken} from '@/api/login'
 import {deepClone, encryption} from '@/util/util'
 import webiste from '@/config/website'
-import {GetMenu} from '@/api/admin/permit'
+import {GetMenu} from '@/api/upms/permit'
 
 function addPath(ele, first) {
   const propsConfig = webiste.menu.props

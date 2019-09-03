@@ -18,7 +18,7 @@ export default {
 
     if (type === 'BIND') {
       request({
-        url: '/admin/social/bind',
+        url: '/cms/social/bind',
         method: 'post',
         params: { state, code }
       }).then(() => {

@@ -6,7 +6,6 @@
   }
 第二步：
   <pagination
-    v-if="page"
     :total="page.total"
     @search="search"
   ></pagination>

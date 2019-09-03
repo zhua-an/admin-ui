@@ -151,7 +151,7 @@
 </template>
 
 <script>
-  import {addObj, delObj, fetchMenuTree, getObj, putObj} from '@/api/admin/permit'
+  import {addObj, delObj, fetchMenuTree, getObj, putObj} from '@/api/upms/permit'
   import {mapGetters} from 'vuex'
 
   export default {

@@ -7,7 +7,7 @@
           @handleSearch="handleSearch"
         />
       </el-row>
-      <v1-table 
+      <data-table 
         :data="table.data"
         :operBut="table.operBut"
         :loading="table.loading" 
@@ -17,10 +17,10 @@
         @handleSearch="handleSearch">
         <template slot-scope="props" slot="delFlag">
           <el-tag v-if="props.obj.row.delFlag === '1'"
-            type="danger">是</el-tag>
-          <el-tag v-else>否</el-tag>
+            type="danger">删除</el-tag>
+          <el-tag v-else>正常</el-tag>
         </template>
-      </v1-table>
+      </data-table>
     </basic-container>
     <el-dialog
       :title="title"
@@ -70,15 +70,15 @@
 
 <script>
   import Search from '@/components/search/search'
-  import V1Table from '@/components/table/v1-table'
-  import {addObj, delObj, queryPage, fetchRoleTree, getObj, updateRolePermit, updateObj} from '@/api/admin/role'
+  import DataTable from '@/components/table/data-table'
+  import {addObj, delObj, queryPage, fetchRoleTree, getObj, updateRolePermit, updateObj} from '@/api/upms/role'
   import {mapGetters} from 'vuex'
 
   export default {
     name: 'role_page',
     components: {
       Search,
-      V1Table
+      DataTable
     },
     data() {
       return {
@@ -282,9 +282,8 @@
                   type: 'success',
                   duration: 2000
                 })
-                resetForm(formName)
-              }).catch(() => {
-
+                this.resetForm(formName)
+                this.dialogRoleVisible = false
               })
             } else {
               updateObj(this.form).then(() => {
@@ -295,9 +294,8 @@
                   type: 'success',
                   duration: 2000
                 })
-                resetForm(formName)
-              }).catch(() => {
-
+                this.resetForm(formName)
+                this.dialogRoleVisible = false
               })
             }
           }

@@ -10,7 +10,7 @@ import store from "@/store"; // progress bar style
 axios.defaults.timeout = 30000
 // 返回其他状态吗
 axios.defaults.validateStatus = function (status) {
-  return status >= 200 && status <= 500 // 默认的
+  return status >= 200 && status <= 507 // 默认的
 }
 // 跨域请求，允许保存cookie
 axios.defaults.withCredentials = true

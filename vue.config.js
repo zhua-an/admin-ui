@@ -46,11 +46,11 @@ module.exports = {
           '^/auth': '/auth'
         }
       },
-      '/admin': {
+      '/cms': {
         target: url,
         ws: true,
         pathRewrite: {
-          '^/admin': '/admin'
+          '^/cms': '/cms'
         }
       }
     }

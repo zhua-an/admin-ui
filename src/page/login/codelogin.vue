@@ -89,7 +89,7 @@ export default {
           if (this.msgKey) return
 
           request({
-              url: '/admin/mobile/' + this.loginForm.mobile,
+              url: '/cms/mobile/' + this.loginForm.mobile,
               method: 'get'
           }).then(response => {
               if (response.data.data) {
