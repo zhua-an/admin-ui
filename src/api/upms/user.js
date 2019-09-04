@@ -2,7 +2,7 @@ import request from '@/router/axios'
 
 export function queryPage (query) {
   return request({
-    url: '/admin/sysuser/page',
+    url: '/cms/sysuser/page',
     method: 'get',
     params: query
   })
@@ -10,7 +10,7 @@ export function queryPage (query) {
 
 export function addObj (obj) {
   return request({
-    url: '/admin/sysuser/add',
+    url: '/cms/sysuser/add',
     method: 'post',
     data: obj
   })
@@ -18,21 +18,21 @@ export function addObj (obj) {
 
 export function getObj (id) {
   return request({
-    url: '/admin/sysuser/' + id,
+    url: '/cms/sysuser/' + id,
     method: 'get'
   })
 }
 
 export function lockOrUnlock (id) {
   return request({
-    url: '/admin/sysuser/lockOrUnlock/' + id,
+    url: '/cms/sysuser/lockOrUnlock/' + id,
     method: 'post'
   })
 }
 
 export function updateObj (obj) {
   return request({
-    url: '/admin/sysuser/update',
+    url: '/cms/sysuser/update',
     method: 'post',
     data: obj
   })
@@ -40,7 +40,7 @@ export function updateObj (obj) {
 
 export function delObj (id) {
   return request({
-    url: '/admin/sysuser/lockOrUnlock/' + id,
+    url: '/cms/sysuser/lockOrUnlock/' + id,
     method: 'delete'
   })
 }

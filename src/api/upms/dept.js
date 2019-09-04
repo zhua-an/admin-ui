@@ -2,7 +2,7 @@ import request from '@/router/axios'
 
 export function queryPage (query) {
   return request({
-    url: '/admin/dept/page',
+    url: '/cms/dept/page',
     method: 'get',
     params: query
   })
@@ -10,7 +10,7 @@ export function queryPage (query) {
 
 export function getTree (query) {
   return request({
-    url: '/admin/dept/getTree',
+    url: '/cms/dept/getTree',
     method: 'get',
     params: query
   })
@@ -18,7 +18,7 @@ export function getTree (query) {
 
 export function addObj (obj) {
   return request({
-    url: '/admin/dept/add',
+    url: '/cms/dept/add',
     method: 'post',
     data: obj
   })
@@ -26,14 +26,14 @@ export function addObj (obj) {
 
 export function delObj (id) {
   return request({
-    url: '/admin/dept/delete/' + id,
+    url: '/cms/dept/delete/' + id,
     method: 'delete'
   })
 }
 
 export function updateObj (obj) {
   return request({
-    url: '/admin/dept/update',
+    url: '/cms/dept/update',
     method: 'post',
     data: obj
   })

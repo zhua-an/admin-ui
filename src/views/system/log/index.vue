@@ -43,7 +43,7 @@
 
 <script>
   import {delObj, fetchList} from '@/api/system/log'
-  import {tableOption} from '@/const/crud/admin/log'
+  import {tableOption} from '@/const/crud/cms/log'
   import {mapGetters} from 'vuex'
 
   export default {

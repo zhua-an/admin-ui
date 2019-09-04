@@ -35,7 +35,7 @@
 
 <script>
   import {addObj, delObj, fetchList, putObj} from '@/api/system/dict'
-  import {tableOption} from '@/const/crud/admin/dict'
+  import {tableOption} from '@/const/crud/cms/dict'
   import {mapGetters} from 'vuex'
 
   export default {

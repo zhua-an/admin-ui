@@ -2,14 +2,14 @@ import request from '@/router/axios'
 
 export function getRoleList () {
   return request({
-    url: '/admin/role/getRoleList',
+    url: '/cms/role/getRoleList',
     method: 'get'
   })
 }
 
 export function queryPage (query) {
   return request({
-    url: '/admin/role/page',
+    url: '/cms/role/page',
     method: 'get',
     params: query
   })
@@ -17,14 +17,14 @@ export function queryPage (query) {
 
 export function getObj (id) {
   return request({
-    url: '/admin/role/' + id,
+    url: '/cms/role/' + id,
     method: 'get'
   })
 }
 
 export function addObj (obj) {
   return request({
-    url: '/admin/role/add',
+    url: '/cms/role/add',
     method: 'post',
     data: obj
   })
@@ -32,7 +32,7 @@ export function addObj (obj) {
 
 export function updateObj (obj) {
   return request({
-    url: '/admin/role/update',
+    url: '/cms/role/update',
     method: 'post',
     data: obj
   })
@@ -40,14 +40,14 @@ export function updateObj (obj) {
 
 export function delObj (id) {
   return request({
-    url: '/admin/role/delete/' + id,
+    url: '/cms/role/delete/' + id,
     method: 'delete'
   })
 }
 
 export function updateRolePermit (roleId, permissionIds) {
   return request({
-    url: '/admin/role/updateRolePermit',
+    url: '/cms/role/updateRolePermit',
     method: 'post',
     params: {
       roleId: roleId,
@@ -58,7 +58,7 @@ export function updateRolePermit (roleId, permissionIds) {
 
 export function fetchRoleTree (roleId) {
   return request({
-    url: '/admin/permission/fetchRoleTree/' + roleId,
+    url: '/cms/permission/fetchRoleTree/' + roleId,
     method: 'get'
   })
 }

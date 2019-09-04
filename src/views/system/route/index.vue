@@ -1,20 +1,16 @@
 <template>
   <div class="execution">
     <basic-container>
-      <el-alert
-        title="路由配置是非常专业的事情，不建议非工程师操作"
-        type="warning">
-      </el-alert>
-      <vue-json-editor v-model="json" :show-btns="false"></vue-json-editor>
-      <div align='center'>
-        <el-button @click="edit()">更新</el-button>
+      <div class="top">
+        <el-button v-if="checkPermission('sys_route_edit')" type="primary" @click="edit()">更新</el-button>
       </div>
+      <vue-json-editor v-model="json" :expand-depth=2 :show-btns="false"></vue-json-editor>
     </basic-container>
   </div>
 </template>
 <script>
   import vueJsonEditor from 'vue-json-editor'
-  import {fallback, fetchList, putObj} from '@/api/system/route'
+  import {queryList, updateObj} from '@/api/system/route'
 
   export default {
     data() {
@@ -34,7 +30,7 @@
 
     methods: {
       getList() {
-        fetchList().then(response => {
+        queryList().then(response => {
           let result = response.data.data;
           for (var i = 0; i < result.length; i++) {
             let route = result[i]
@@ -52,7 +48,7 @@
       },
 
       edit() {
-        putObj(this.json).then(response => {
+        updateObj(this.json).then(() => {
           this.$notify({
             title: '成功',
             message: '更新成功',
@@ -64,3 +60,8 @@
     }
   }
 </script>
+<style scoped>
+.top{
+  padding: 10px 0;
+}
+</style>

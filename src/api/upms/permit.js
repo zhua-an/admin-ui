@@ -2,14 +2,14 @@ import request from '@/router/axios'
 
 export function GetMenu () {
   return request({
-    url: '/admin/permission',
+    url: '/cms/permission',
     method: 'get'
   })
 }
 
 export function fetchMenuTree (query) {
   return request({
-    url: '/admin/permission/getTree',
+    url: '/cms/permission/getTree',
     method: 'get',
     params: query
   })
@@ -17,7 +17,7 @@ export function fetchMenuTree (query) {
 
 export function addObj (obj) {
   return request({
-    url: '/admin/permission',
+    url: '/cms/permission',
     method: 'post',
     data: obj
   })
@@ -25,14 +25,14 @@ export function addObj (obj) {
 
 export function delObj (id) {
   return request({
-    url: '/admin/permission/' + id,
+    url: '/cms/permission/' + id,
     method: 'delete'
   })
 }
 
 export function putObj (obj) {
   return request({
-    url: '/admin/permission',
+    url: '/cms/permission',
     method: 'put',
     data: obj
   })

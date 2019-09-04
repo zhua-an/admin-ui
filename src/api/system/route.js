@@ -1,10 +1,16 @@
 import request from '@/router/axios'
 
-export function queryList (query) {
+export function queryList () {
     return request({
-      url: '/cms/dept/page',
-      method: 'get',
-      params: query
+      url: '/cms/route/queryList',
+      method: 'get'
     })
   }
 
+  export function updateObj (obj) {
+    return request({
+      url: '/cms/route/update',
+      method: 'post',
+      data: obj
+    })
+  }

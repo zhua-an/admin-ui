@@ -54,7 +54,7 @@ export const loginBySocial = (state, code) => {
 
 export const getUserInfo = () => {
   return request({
-    url: '/admin/sysuser/info',
+    url: '/cms/sysuser/info',
     method: 'get'
   })
 }

@@ -26,7 +26,7 @@
 
 <script>
   import {delObj, fetchList} from '@/api/system/token'
-  import {tableOption} from '@/const/crud/admin/token'
+  import {tableOption} from '@/const/crud/cms/token'
   import {mapGetters} from 'vuex'
 
   export default {
