@@ -52,6 +52,13 @@ module.exports = {
         pathRewrite: {
           '^/cms': '/cms'
         }
+      },
+      '/task': {
+        target: url,
+        ws: true,
+        pathRewrite: {
+          '^/task': '/task'
+        }
       }
     }
   }

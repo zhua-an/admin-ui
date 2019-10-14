@@ -104,19 +104,11 @@
               </el-form-item>
               <el-form-item v-if="form.type === '0'"
                             :key="'path'"
-                            label="前端路由"
+                            label="地址"
                             prop="path">
                 <el-input v-model="form.path"
                           :disabled="formEdit"
-                          placeholder="请输入前端路由"></el-input>
-              </el-form-item>
-              <el-form-item v-if="form.type === '0'"
-                            :key="'component'"
-                            label="前端组件"
-                            prop="component">
-                <el-input v-model="form.component"
-                          :disabled="formEdit"
-                          placeholder="请输入前端组件"></el-input>
+                          placeholder="/***/*** || http://"></el-input>
               </el-form-item>
               <el-form-item v-if="form.type === '0'"
                             :key="'keepAlive'"
@@ -151,7 +143,8 @@
 </template>
 
 <script>
-  import {addObj, delObj, fetchMenuTree, getObj, putObj} from '@/api/upms/permit'
+  import {addObj, delObj, fetchMenuTree, putObj} from '@/api/upms/permit'
+  import {isURL} from '@/util/validate'
   import {mapGetters} from 'vuex'
 
   export default {
@@ -163,9 +156,7 @@
         formEdit: true,
         formAdd: true,
         formStatus: '',
-        showElement: false,
         typeOptions: ['0', '1'],
-        methodOptions: ['GET', 'POST', 'PUT', 'DELETE'],
         listQuery: {
           name: undefined
         },
@@ -212,9 +203,6 @@
           permission: [
             { required: true, message: "The permission cannot be empty", trigger: "blur" }
           ],
-          component: [
-            { required: true, message: "The component cannot be empty", trigger: "blur" }
-          ],
           path: [
             { required: true, message: "The path cannot be empty", trigger: "blur" }
           ]
@@ -240,7 +228,19 @@
       ...mapGetters([
         'elements',
         'permissions'
-      ])
+      ]),
+      getPath: function() {
+        return this.form.path
+      }
+    },
+    watch: {
+      getPath: function(val) {
+        if (isURL(val)) {
+            this.form.component = val
+        } else {
+          this.form.component = 'views'+val
+        }
+      }
     },
     methods: {
       getList() {
@@ -302,7 +302,6 @@
         this.form.keepAlive = data.keepAlive
 
         this.currentId = data.id
-        this.showElement = true
       },
       handlerEdit() {
         if (this.form.id) {

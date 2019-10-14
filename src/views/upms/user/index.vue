@@ -308,8 +308,11 @@
     methods: {
       handleSearch(page) {
         if (page) {
-          this.table.page.currentPage = page.pageNum
-          this.table.page.pageSize = page.pageSize
+          this.searchForm = page
+          if(page.pageNum) {
+            this.table.page.currentPage = page.pageNum
+            this.table.page.pageSize = page.pageSize
+          }
         }
         this.getList()
       },

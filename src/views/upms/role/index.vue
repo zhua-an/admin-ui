@@ -175,10 +175,13 @@
                   label: '删除',                // 按钮文字
                   method: this.handleDelete,       // 点击按钮后触发的父组件事件
                   size: 'mini',
+                  disabled(row, index) {
+                    return row.delFlag === '1'
+                  },
                   id: '2'                       // 按钮循环组件的key值
                 }, {
                   type: 'success',
-                  hasPermit: 'sys_role_auth',
+                  hasPermit: 'sys_role_perm',
                   label: '授权',                // 按钮文字
                   method: this.handlePermit,      // 点击按钮后触发的父组件事件
                   size: 'mini',
@@ -210,8 +213,11 @@
     methods: {
       handleSearch(page) {
         if (page) {
-          this.table.page.currentPage = page.pageNum
-          this.table.page.pageSize = page.pageSize
+          this.searchForm = page
+          if(page.pageNum) {
+            this.table.page.currentPage = page.pageNum
+            this.table.page.pageSize = page.pageSize
+          }
         }
         this.getList()
       },

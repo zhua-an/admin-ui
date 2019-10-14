@@ -80,7 +80,7 @@ RouterPlugin.install = function (router, store) {
             return oMenu[propsDefault.path]
           }
         })()
-
+        
         const component = oMenu.component
 
         const name = oMenu[propsDefault.label]

@@ -154,7 +154,7 @@ data() {
       <!-- table中间button eg:导出 -->
       <div v-if="operBut && operBut.length > 0" class="btn-operates">
         <span v-for="(item, index) in operBut" :key="index">
-          <a v-if="checkPermission(item.hasPermit) "
+          <a v-if="checkPermission(item.hasPermit)"
             :href="item.href || null"
             @click="item.method()"
           >
@@ -245,7 +245,7 @@ data() {
           <template slot-scope="scope">
             <span v-for="(item,index) in option.operation.data" :key="item.id ? item.id : index">
               <el-button
-                v-if="item.hasPermit"
+                v-if="checkPermission(item.hasPermit)"
                 :class="item.classname ? item.classname : ''"
                 :type="item.type ? item.type : ''"
                 :icon="item.icon ? item.icon : ''"
@@ -442,9 +442,7 @@ data() {
                       },                           
                       hasPermit: {                 // 是否有权限
                         type: String,
-                        default(permitCode) {
-                          return checkPermission(permitCode) 
-                        }
+                        default: ''
                       },
                       disabled: {                  // 是否可用
                         type : Function

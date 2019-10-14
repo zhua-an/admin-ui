@@ -143,7 +143,7 @@
                   hasPermit: 'sys_dept_del',
                   label: '删除',
                   disabled(row, index) {
-                    return row.children && row.children.length > 0
+                    return (row.children && row.children.length > 0) || row.delFlag == '1'
                   },
                   method: this.handleDelete,  
                   id: '2'                     
@@ -188,8 +188,11 @@
       },
       handleSearch(page) {
         if (page) {
-          this.table.page.currentPage = page.pageNum
-          this.table.page.pageSize = page.pageSize
+          this.searchForm = page
+          if(page.pageNum) {
+            this.table.page.currentPage = page.pageNum
+            this.table.page.pageSize = page.pageSize
+          }
         }
         this.getList()
       },

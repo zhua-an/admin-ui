@@ -16,16 +16,16 @@
                      label-width="100px"
                      v-if="switchStatus==='userManager'"
                      class="demo-ruleForm">
-              <el-form-item label="用户名" :key="username"
+              <el-form-item label="用户名" :key="'username'"
                             prop="username">
                 <el-input type="text"
                           v-model="ruleForm2.username"
                           disabled></el-input>
               </el-form-item>
-              <el-form-item label="手机号" prop="phone" :key="phone">
+              <el-form-item label="手机号" :key="'phone'" prop="phone">
                 <el-input v-model="ruleForm2.phone" placeholder="验证码登录使用"></el-input>
               </el-form-item>
-              <el-form-item label="邮箱" prop="email" :key="email">
+              <el-form-item label="邮箱" :key="'email'" prop="email">
                 <el-input v-model="ruleForm2.email" placeholder="请输入邮箱地址"></el-input>
               </el-form-item>
               <el-form-item label="头像">
@@ -58,19 +58,19 @@
                      label-width="100px"
                      v-if="switchStatus==='passwordManager'"
                      class="demo-ruleForm">
-              <el-form-item label="原密码" :key="password"
+              <el-form-item label="原密码" :key="'password'"
                             prop="password">
                 <el-input type="password"
                           v-model="ruleForm2.password"
                           auto-complete="off"></el-input>
               </el-form-item>
-              <el-form-item label="密码" :key="newpassword1"
+              <el-form-item label="密码" :key="'newpassword1'"
                             prop="newpassword1">
                 <el-input type="password"
                           v-model="ruleForm2.newpassword1"
                           auto-complete="off"></el-input>
               </el-form-item>
-              <el-form-item label="确认密码" :key="newpassword2"
+              <el-form-item label="确认密码" :key="'newpassword2'"
                             prop="newpassword2">
                 <el-input type="password"
                           v-model="ruleForm2.newpassword2"
@@ -94,7 +94,7 @@
 <script>
   import {handleDown} from "@/api/upms/user";
   import {handleImg, openWindow} from '@/util/util'
-    import {isEmail, isMobile} from '@/util/validate'
+  import {isEmail, isMobile} from '@/util/validate'
   import {mapState} from 'vuex'
   import store from "@/store";
   import request from '@/router/axios'
@@ -102,7 +102,7 @@
   export default {
     data() {
       var validatePass = (rule, value, callback) => {
-        if (this.ruleForm2.password !== '') {
+        if (this.ruleForm2.newpassword1 !== '') {
           if (value !== this.ruleForm2.newpassword1) {
             callback(new Error('两次输入密码不一致!'))
           } else {
@@ -151,8 +151,8 @@
           email: ''
         },
         rules2: {
-          password: [{required: true, min: 6, message: '原密码不能为空且不少于6位', trigger: 'change'}],
-          newpassword1: [{required: false, min: 6, message: '不少于6位', trigger: 'change'}],
+          password: [{required: true, min: 6, message: '原密码不能为空且不少于6位', trigger: 'blur'}],
+          newpassword1: [{required: false, min: 6, max: 20, message: '密码长度6-20字符', trigger: 'change'}],
           newpassword2: [{required: false, validator: validatePass, trigger: 'blur'}],
           phone: [
             {validator: validateMobilePhone, trigger: 'blur'}
