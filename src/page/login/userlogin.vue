@@ -109,23 +109,23 @@ export default {
     };
   },
   watch: {
-        $route() {
-            const params = this.$route.query
-            this.socialForm.state = params.state
-            this.socialForm.code = params.code
-            if (!validatenull(this.socialForm.state)) {
-                const loading = this.$loading({
-                    lock: true,
-                    text: `登录中,请稍后。。。`,
-                    spinner: 'el-icon-loading'
-                })
-                setTimeout(() => {
-                    loading.close()
-                }, 2000)
-                this.handleSocialLogin()
-            }
+    $route() {
+        const params = this.$route.query
+        this.socialForm.state = params.state
+        this.socialForm.code = params.code
+        if (!validatenull(this.socialForm.state)) {
+            const loading = this.$loading({
+                lock: true,
+                text: `登录中,请稍后。。。`,
+                spinner: 'el-icon-loading'
+            })
+            setTimeout(() => {
+                loading.close()
+            }, 2000)
+            this.handleSocialLogin()
         }
-    },
+    }
+  },
   created () {
     this.refreshCode();
   },
@@ -150,7 +150,7 @@ export default {
     handleSocialLogin () {
       this.$store.dispatch('LoginBySocial', this.socialForm).then(
         () => {
-          this.$router.push({ path: this.tagWel.value });
+          this.$router.push({ path: this.tagWel.value })
         }
       )
     },
@@ -158,7 +158,8 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.$store.dispatch("LoginByUsername", this.loginForm).then(() => {
-            this.$router.push({ path: this.tagWel.value });
+            this.$router.push({ path: this.tagWel.value })
+            this.loginForm.code = ''
           }).catch(()=>{
             this.refreshCode()
           })

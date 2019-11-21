@@ -117,6 +117,8 @@ export default {
         if (valid) {
           this.$store.dispatch("LoginByPhone", this.loginForm).then(() => {
             this.$router.push({ path: this.tagWel.value });
+          }).catch(() => {
+
           });
         }
       });
