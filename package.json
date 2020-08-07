@@ -73,5 +73,17 @@
       "vue-cli-service lint",
       "git add"
     ]
-  }
+  },
+  "description": "```\r npm install\r ```",
+  "main": ".eslintrc.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loyalch/admin-ui.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/loyalch/admin-ui/issues"
+  },
+  "homepage": "https://github.com/loyalch/admin-ui#readme"
 }

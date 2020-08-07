@@ -159,7 +159,7 @@ data() {
             @click="item.method()"
           >
             <el-button type="primary">{{item.title}}</el-button>
-          </a>
+          </a> &nbsp;
         </span>
       </div>
       <el-table

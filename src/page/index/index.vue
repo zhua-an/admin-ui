@@ -145,30 +145,30 @@
         }, 5000);
       },
       connection() {
-        let token = store.getters.access_token
-        let TENANT_ID = getStore({name: 'tenantId'})
-        let headers = {
-          'Authorization': 'Bearer ' + token
-        }
-        // 建立连接对象
-        this.socket = new SockJS('/act/ws');//连接服务端提供的通信接口，连接以后才可以订阅广播消息和个人消息
-        // 获取STOMP子协议的客户端对象
-        this.stompClient = Stomp.over(this.socket);
+        // let token = store.getters.access_token
+        // let TENANT_ID = getStore({name: 'tenantId'})
+        // let headers = {
+        //   'Authorization': 'Bearer ' + token
+        // }
+        // // 建立连接对象
+        // this.socket = new SockJS('/act/ws');//连接服务端提供的通信接口，连接以后才可以订阅广播消息和个人消息
+        // // 获取STOMP子协议的客户端对象
+        // this.stompClient = Stomp.over(this.socket);
 
-        // 向服务器发起websocket连接
-        this.stompClient.connect(headers, () => {
-          this.stompClient.subscribe('/task/' + this.userInfo.username + "-" + TENANT_ID + '/remind', (msg) => { // 订阅服务端提供的某个topic;
-            this.$notify({
-              title: "协同提醒",
-              type: 'warning',
-              dangerouslyUseHTMLString: true,
-              message: msg.body + '任务，请及时处理',
-              offset: 60
-            });
-          });
-        }, (err) => {
+        // // 向服务器发起websocket连接
+        // this.stompClient.connect(headers, () => {
+        //   this.stompClient.subscribe('/task/' + this.userInfo.username + "-" + TENANT_ID + '/remind', (msg) => { // 订阅服务端提供的某个topic;
+        //     this.$notify({
+        //       title: "协同提醒",
+        //       type: 'warning',
+        //       dangerouslyUseHTMLString: true,
+        //       message: msg.body + '任务，请及时处理',
+        //       offset: 60
+        //     });
+        //   });
+        // }, (err) => {
 
-        });
+        // });
       },
       disconnect() {
         if (this.stompClient != null) {

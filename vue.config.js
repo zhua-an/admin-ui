@@ -32,32 +32,11 @@ module.exports = {
   devServer: {
     port: port,
     proxy: {
-      '/code': {
+      '/': {
         target: url,
         ws: true,
         pathRewrite: {
-          '^/code': '/code'
-        }
-      },
-      '/auth': {
-        target: url,
-        ws: true,
-        pathRewrite: {
-          '^/auth': '/auth'
-        }
-      },
-      '/cms': {
-        target: url,
-        ws: true,
-        pathRewrite: {
-          '^/cms': '/cms'
-        }
-      },
-      '/task': {
-        target: url,
-        ws: true,
-        pathRewrite: {
-          '^/task': '/task'
+          '^/': '/'
         }
       }
     }
